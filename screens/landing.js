@@ -1,17 +1,18 @@
-import { StatusBar } from 'expo-status-bar';
+
 import React from 'react';
 import Home from './home/home'
-import RestuView from './home/restuview'
+import Login from './login/login'
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import Header from './header'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
+const Logout = () => {
+  return (<></>)
+}
 const Drawer = createDrawerNavigator();
-const Landing = () => {
-    return ( <>
-        <StatusBar hidden/>
-          <NavigationContainer >
+const Landing = ({navigation}) => {
+    return (
+       
             <Drawer.Navigator screenOptions={{
               header : Header,
               drawerStyle: {
@@ -21,9 +22,17 @@ const Landing = () => {
                 }} 
               initialRouteName="Home">
               <Drawer.Screen  name="Home" component={Home} />
-              <Drawer.Screen name="RestuView" component={RestuView} />
+              <Drawer.Screen name="Logout" component={Logout} listeners={({ navigation }) => ({ 
+                  state: (e) => {
+                    if (e.data.state.index === 1) {
+                        // THIS IS SO DUMB , LEARN HOW PROPS WORK PLS
+                        navigation.replace("Auth")
+                        AsyncStorage.clear()
+                    }
+                  }
+              })}/>
             </Drawer.Navigator>
-          </NavigationContainer>
-          </>
     )
 }
+
+export default Landing

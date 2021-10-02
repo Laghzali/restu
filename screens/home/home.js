@@ -60,6 +60,7 @@ const DATA = [
 
     return (
     <View>
+
       <TouchableOpacity style={styles.item}>
              <ImageBackground 
                 resizeMode = 'cover'
@@ -85,7 +86,7 @@ const DATA = [
     )}
   
   
-const Home =({navigation}) => {
+const Home =(props) => {
   const [active, setActive] = useState({
     elm0 : true,
     elm1 : false

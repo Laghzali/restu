@@ -1,22 +1,38 @@
 
-import React from 'react';
+import React, {useState } from 'react';
 import { StyleSheet,Text , Button, View ,TextInput } from 'react-native';
 import LoginBg from './loginBg';
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
     useFonts,
     Inter_900Black,
     Roboto_100Thin
   } from '@expo-google-fonts/inter';
 
-const Login =() => {
+const Login =({navigation}) => {
+    const [userEmail, setUserEmail] = useState('');
+    const [userPassword, setUserPass] = useState('');
+    const DATA = {
+        userEmail : 'x',
+        userPass : 'x'
+    }
+    const handleSubmit = () => {
+        if(userEmail == DATA.userEmail  && userPassword == DATA.userPass) {
+            AsyncStorage.setItem('user_id', DATA.user);
+            navigation.replace('Landing');
+        } else {
+            alert('???')
+        }
+    }
     let [fontsLoaded] = useFonts({
         Inter_900Black
       });
     
-   return <View style={{flex : 1}}>
-            <LoginBg style={styles.background}>
+   return <View style={{flex : 1,backgroundColor:'rgb(255,255,255)'}}>
+            <LoginBg>
 
             </LoginBg>
             <View style={styles.loginView}>
@@ -24,6 +40,9 @@ const Login =() => {
                        <View style={styles.inputContainer}>
                         <AntDesign name="user" size={18} color="#68D25F" />    
                         <TextInput
+                        onChangeText={(UserEmail) =>
+                            setUserEmail(UserEmail)
+                          }
                         style={styles.input}
                             placeholder="Email"
                         />
@@ -32,6 +51,9 @@ const Login =() => {
                       <View style={styles.inputContainer}>
                       <Feather name="hash" size={18} color="#68D25F" />
                         <TextInput
+                        onChangeText={(UserPass) =>
+                        setUserPass(UserPass)
+                        }
                         style={styles.input}
                             placeholder="Password"
                         />
@@ -40,15 +62,15 @@ const Login =() => {
                         <Text style={{color:'#68D25F' , fontFamily: 'Inter_900Black'}}>Forget password?</Text>
                     </View>
 
-                    <Button
-
+                    <Button 
+                        onPress={handleSubmit}
                         title="Sign in"
                         color="#68D25F"
                         accessibilityLabel="Learn more about this purple button"
                     />
                     <Text style={{marginLeft:'auto', marginRight:'auto' ,fontFamily: 'Inter_900Black' ,margin:10}}>Or</Text>
                     <Button
-
+                        onPress={() => {navigation.navigate('SignUpScreen')}}
                         title="Sign up"
                         color="#68D25F"
 
@@ -71,7 +93,8 @@ const styles = StyleSheet.create({
                 marginTop : '6%',
                 flex:1,
                 justifyContent: 'center',
-                alignItems : 'center'
+                alignItems : 'center',
+                backgroundColor:'rgb(255,255,255)'
             },
             input : {
 

@@ -8,11 +8,12 @@ import RestuView from './screens/home/restuview'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import Header from './screens/header'
+import Landing from './screens/landing'
+
 
 const Stack  = createStackNavigator();
 const Drawer = createDrawerNavigator();
-const Auth = () => {
+const Auth = ({navigation}) => {
 
   return (
     <Stack.Navigator initialRouteName="LoginScreen">
@@ -30,22 +31,33 @@ const Auth = () => {
   )
 }
 export default function App() {
-  return ( <>
-  <StatusBar hidden/>
-    <NavigationContainer >
-      <Drawer.Navigator screenOptions={{
-        header : Header,
-        drawerStyle: {
-          color : 'white',
-          width: 240,
-                    },
-          }} 
-        initialRouteName="Home">
-        <Drawer.Screen  name="Home" component={Home} />
-        <Drawer.Screen name="RestuView" component={RestuView} />
-      </Drawer.Navigator>
+  return ( 
+    
+    <NavigationContainer>
+       <StatusBar hidden/>
+      <Stack.Navigator initialRouteName="Splash">
+        {/* SplashScreen which will come once for 5 Seconds */}
+        <Stack.Screen
+          name="SplashScreen"
+          component={Splash}
+          // Hiding header for Splash Screen
+          options={{headerShown: false}}
+        />
+        {/* Auth Navigator: Include Login and Signup */}
+        <Stack.Screen
+          name="Auth"
+          component={Auth}
+          options={{headerShown: false}}
+        />
+        {/* Navigation Drawer as a landing page */}
+        <Stack.Screen
+          name="Landing"
+          component={Landing}
+          // Hiding header for Navigation Drawer
+          options={{headerShown: false}}
+        />
+      </Stack.Navigator>
     </NavigationContainer>
-    </>
   )
 }
 

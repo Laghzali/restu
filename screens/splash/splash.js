@@ -1,14 +1,34 @@
-import React from 'react';
+import React ,  {useEffect, useState} from 'react';
 import { ImageBackground , View , Text , StyleSheet } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Login = () => (
+
+
+const Splash = ({navigation}) => {
+   //State for ActivityIndicator animation
+   const [animating, setAnimating] = useState(true);
+
+   useEffect(() => {
+     setTimeout(() => {
+       setAnimating(false);
+       //Check if user_id is set or not
+       //If not then send for Authentication
+       //else send to Home Screen
+       AsyncStorage.getItem('user_id').then((value) =>
+         navigation.replace(
+           value === null ? 'Auth' : 'Landing'
+         ),
+       );
+     }, 1000);
+   }, []);
+  return(
     <View style={styles.container}>
       <ImageBackground source={require("./SPLASH.png")}style={styles.image}>
       
       </ImageBackground>
     </View>
   );
-  
+}
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -18,5 +38,4 @@ const Login = () => (
       justifyContent: "center"
     }
   });
-  
-  export default Login;
+  export default Splash;
