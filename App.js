@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import Splash from './screens/splash/splash'
 import SignUp from './screens/signup/signup'
-import Home from './screens/home/home'
+
 import Login from './screens/login/login'
 import RestuView from './screens/home/restuview'
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -53,6 +53,12 @@ export default function App() {
         <Stack.Screen
           name="Landing"
           component={Landing}
+          // Hiding header for Navigation Drawer
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="RestuView"
+          component={RestuView}
           // Hiding header for Navigation Drawer
           options={{headerShown: false}}
         />

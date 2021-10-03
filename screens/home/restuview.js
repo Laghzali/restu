@@ -33,8 +33,8 @@ const RenderReview = ({}) => {
     return review
 }
 
-const RestuView = ({navigation}) => {
-
+const RestuView = ({route, navigation}) => {
+    
 
     return <SafeAreaView style={styles.container}>
 
@@ -44,7 +44,7 @@ const RestuView = ({navigation}) => {
             <TouchableOpacity style={{left:0}} onPress={(props) => {navigation.goBack(null) }}>
                 <AntDesign  style={{ marginRight:'auto'}}name="arrowleft" size={30} color="#68D25F" />
             </TouchableOpacity>
-            <Text style={styles.restuname}>xxxxxxxx</Text>  
+            <Text style={styles.restuname}>{route.params.title}</Text>  
         </View>
 
         {/*SCROLL */}
@@ -56,17 +56,17 @@ const RestuView = ({navigation}) => {
                 resizeMode = 'cover'
                 style={styles.itemImage}
                 source={{
-                uri: 'https://marinercompass.org/wp-content/uploads/2021/04/menu-restaurant-vintage-table.jpg',
+                uri: route.params.image
                 }}
             >
             </ImageBackground > 
             <View style={styles.restuInfoContainer}>
                 <View style={styles.restuInfo}>
-                    <Text style={styles.restuInfoText}>Some address , 22 2293</Text>
-                    <Text style={styles.restuInfoText}>+48 51943873</Text>
+                    <Text style={styles.restuInfoText}>{route.params.title}</Text>
+                    <Text style={styles.restuInfoText}>{route.params.phone}</Text>
                 </View>
                 <View style={styles.stars}> 
-                    <StarRender many={3}></StarRender>
+                    <StarRender many={route.params.stars}></StarRender>
                 </View>      
             </View>
 

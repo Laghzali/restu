@@ -21,7 +21,7 @@ const Login =({navigation}) => {
     }
     const handleSubmit = () => {
         if(userEmail == DATA.userEmail  && userPassword == DATA.userPass) {
-            AsyncStorage.setItem('user_id', DATA.user);
+            AsyncStorage.setItem('user_id', DATA.userEmail);
             navigation.replace('Landing');
         } else {
             alert('???')

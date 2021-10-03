@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet,Text ,CheckBox , Button, View ,TextInput } from 'react-native';
+import { StyleSheet,Text ,CheckBox , Button, View ,TextInput, TouchableOpacity } from 'react-native';
 import LoginBg from './loginBg';
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
@@ -16,7 +16,8 @@ const SignUp =() => {
         Inter_900Black
       });
     
-   return <View style={{flex : 1}}>
+   return <View style={{flex : 1,  backgroundColor:'white'}}>
+       
             <LoginBg style={styles.background}>
 
             </LoginBg>
@@ -64,7 +65,6 @@ const SignUp =() => {
                             title="Sign Up"
                             color="#68D25F"
                         />
-                
                     </View>
                 </View>
          </View>

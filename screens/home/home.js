@@ -56,12 +56,12 @@ const DATA = [
           }
           return array
     }
-  const Item = ({phone, title, image , stars }) => {
+  const Item = ({phone, title, image , stars , navigation }) => {
 
     return (
     <View>
 
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity onPress={() => navigation.navigate('RestuView' , { phone : phone, title : title , image : image , stars : stars  })}  style={styles.item}>
              <ImageBackground 
                 resizeMode = 'cover'
                 style={styles.itemImage}
@@ -86,7 +86,8 @@ const DATA = [
     )}
   
   
-const Home =(props) => {
+const Home =({navigation}) => {
+  
   const [active, setActive] = useState({
     elm0 : true,
     elm1 : false
@@ -101,9 +102,10 @@ const Home =(props) => {
 
   }
 
-    const renderItem = ({ item }) => (
-        <Item stars={item.stars} phone={item.phone} image={item.image} title={item.title} />
-      );
+    const renderItem = ({ item }) => {
+
+        return (<Item navigation={navigation} stars={item.stars} phone={item.phone} image={item.image} title={item.title} />)
+      }
 
    return <View style={styles.container}>
 
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
     dashboard : {
         color : '#CBCBCB',
         fontWeight : 'bold',
-        fontSize:24
+        fontSize:18
     },
     body : {
         flex: 1,

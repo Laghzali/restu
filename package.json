@@ -11,6 +11,7 @@
     "@expo-google-fonts/roboto": "^0.2.0",
     "@fortawesome/react-fontawesome": "^0.1.15",
     "@react-native-async-storage/async-storage": "~1.15.0",
+    "@react-native-firebase/app": "^12.8.0",
     "@react-navigation/drawer": "^6.1.6",
     "@react-navigation/native": "^6.0.4",
     "@react-navigation/stack": "^6.0.9",
@@ -31,7 +32,8 @@
     "react-native-svg": "12.1.1",
     "react-native-svg-uri": "^1.2.3",
     "react-native-unimodules": "0.14.10",
-    "react-native-web": "~0.13.12"
+    "react-native-web": "~0.13.12",
+    "firebase": "8.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"
