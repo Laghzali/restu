@@ -35,9 +35,9 @@ const RenderReview = ({}) => {
 
 const RestuView = ({route, navigation}) => {
     
-
+    console.log(route.params)
     return <SafeAreaView style={styles.container}>
-
+        <Header/>
     <View style={styles.body}>
         
         <View style={{ justifyContent: 'space-between' ,flexDirection: 'row',  alignItems :'center' ,marginBottom:5}}>
@@ -62,7 +62,7 @@ const RestuView = ({route, navigation}) => {
             </ImageBackground > 
             <View style={styles.restuInfoContainer}>
                 <View style={styles.restuInfo}>
-                    <Text style={styles.restuInfoText}>{route.params.title}</Text>
+                    <Text style={styles.restuInfoText}>{route.params.name}</Text>
                     <Text style={styles.restuInfoText}>{route.params.phone}</Text>
                 </View>
                 <View style={styles.stars}> 

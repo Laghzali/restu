@@ -3,47 +3,8 @@ import { Entypo } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import Header from '../header'
-import React, { useState , useRef} from "react";
+import React, { useState , useEffect } from "react";
 import { StyleSheet,ImageBackground , TouchableOpacity ,FlatList,Text, View } from 'react-native';
-const DATA = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba5',
-      title: 'First Item',
-      stars : 3,
-      phone: '510347844',
-      image : 'https://images.unsplash.com/photo-1552566626-52f8b828add9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80'
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f634',
-      phone: '510347844',
-      stars : 2,
-      title: 'Second Item',
-      image : 'https://media.gettyimages.com/photos/cozy-restaurant-for-gathering-with-friends-picture-id1159992039?s=612x612'
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d723',
-      phone: '510347844',
-      title: 'Third Item',
-      stars : 2,
-      image : 'https://marinercompass.org/wp-content/uploads/2021/04/menu-restaurant-vintage-table.jpg'
-    },    {
-        id: '58694a0f-3da1-471f-bd96-145571e293722',
-        stars : 5,
-      phone: '510347844',
-      title: 'Third Item',
-        image : 'https://marinercompass.org/wp-content/uploads/2021/04/menu-restaurant-vintage-table.jpg'
-      },    {
-        id: '58694a0f-3da1-471f-bd96-145571e2xd721',
-        stars : 1,
-      phone: '510347844',
-      title: 'Third Item',
-        image : 'https://marinercompass.org/wp-content/uploads/2021/04/menu-restaurant-vintage-table.jpg'
-      },
-  ];
-
-
-
 
   const StarRender = ({many}) => {
           let array = []
@@ -56,23 +17,23 @@ const DATA = [
           }
           return array
     }
-  const Item = ({phone, title, image , stars , navigation }) => {
+  const Item = ({phone, name, image , stars , address ,navigation }) => {
 
     return (
     <View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('RestuView' , { phone : phone, title : title , image : image , stars : stars  })}  style={styles.item}>
+      <TouchableOpacity onPress={() => navigation.navigate('RestuView' , { phone : phone, name : name , image : image , stars : stars , address : address  })}  style={styles.item}>
              <ImageBackground 
                 resizeMode = 'cover'
                 style={styles.itemImage}
                 source={{
-                uri: image,
+                uri: decodeURI(image),
                 }}
             >
               <LinearGradient start= {{ x : 1 , y : 1}} end={{x : 0.6 , y : 0.5}} colors={['rgba(39, 33, 33, 0.8)' , 'rgba(39, 33, 33, 0.41)']} style={styles.overlay}>  
                 <View style={{ flexDirection:'column', flex:3}}>
-                  <Text style={styles.titleName}>{title}</Text>
-                  <Text style={styles.titleAddress}>{phone}</Text>
+                  <Text style={styles.titleName}>{name}</Text>
+                  <Text style={styles.titleAddress}>{address}</Text>
                 </View>
 
                 <View style={{flexDirection:'row' , flex:1 , justifyContent:'center' , alignItems :'center' , marginRight:'5%'}}>
@@ -87,6 +48,17 @@ const DATA = [
   
   
 const Home =({navigation}) => {
+  const [data , setData] = useState()
+
+  useEffect(() => {
+    fetch("http://192.168.0.88:8000/api/resturants")
+      .then(response => response.json())
+      .then(json => {
+        setData(json);
+      });
+  }, [])
+
+  console.log(data)
   
   const [active, setActive] = useState({
     elm0 : true,
@@ -104,7 +76,7 @@ const Home =({navigation}) => {
 
     const renderItem = ({ item }) => {
 
-        return (<Item navigation={navigation} stars={item.stars} phone={item.phone} image={item.image} title={item.title} />)
+        return (<Item navigation={navigation} stars={item.stars} phone={item.phone} image={item.pic} address={item.address} name={item.name} />)
       }
 
    return <View style={styles.container}>
@@ -119,7 +91,7 @@ const Home =({navigation}) => {
                   </TouchableOpacity>   
                 </View>
                 <FlatList
-                    data={DATA}
+                    data={data}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
                 />
