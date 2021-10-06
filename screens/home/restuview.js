@@ -1,11 +1,12 @@
-import React, { useState} from "react";
+import React, { useState , useEffect} from "react";
 import { StyleSheet,Text,Image,Dimensions, TextInput ,Button,SafeAreaView,ScrollView,ImageBackground, View } from 'react-native';
 import { Entypo } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native-gesture-handler";
-import Header from '../header'
+import * as Progress from 'react-native-progress';
+
 const StarRender = ({many}) => {
     let array = []
     let max = 5
@@ -18,28 +19,40 @@ const StarRender = ({many}) => {
     return array
 }
 
-const RenderReview = ({}) => {
+const RenderReview = ({data}) => {
+
     let review = []
-    review.push(
-        <View style={{flexDirection: 'row', marginTop:15, alignItems:'center'}}>
-        <Image style={{width:35,height:35,borderRadius:50}}source={{
-                uri: 'https://scontent-waw1-1.xx.fbcdn.net/v/t39.30808-6/244318308_920940505297987_843937583073049225_n.jpg?_nc_cat=100&ccb=1-5&_nc_sid=09cbfe&_nc_ohc=ojCqFj6BtfIAX8JIsnY&_nc_ht=scontent-waw1-1.xx&oh=f7542e39d0541000952fa3bc82436fb6&oe=615B50D3',
-                }}></Image>
-        <Text style={{padding:5,width:'75%',color:'#CBCBCB', backgroundColor:'rgba(196, 196, 196, 0.31)', borderWidth:1,borderRadius:3,marginLeft:5,height:50}}>review</Text>
-        <TouchableOpacity><Entypo name="arrow-bold-up" size={24} color="#68D25F" /></TouchableOpacity>
-        <TouchableOpacity><Entypo name="arrow-bold-down" size={24} color="#68D25F" /></TouchableOpacity>
-    </View>
-    )
+    for(var item in data) {
+        console.log(item)
+        review.push(
+            <View style={{flexDirection: 'row', marginTop:15, alignItems:'center'}}>
+            <Image style={{width:35,height:35,borderRadius:50}}source={{
+                    uri: data[item].pic,
+                    }}></Image>
+            <Text style={{padding:5,width:'75%',color:'#CBCBCB', backgroundColor:'rgba(196, 196, 196, 0.31)', borderWidth:1,borderRadius:3,marginLeft:5,height:'auto'}}>{data[item].note}</Text>
+            <TouchableOpacity><Entypo name="arrow-bold-up" size={24} color="#68D25F" /></TouchableOpacity>
+            <TouchableOpacity><Entypo name="arrow-bold-down" size={24} color="#68D25F" /></TouchableOpacity>
+        </View>
+        )
+    }
     return review
 }
 
 const RestuView = ({route, navigation}) => {
-    
-    console.log(route.params)
+    const [data , setData] = useState()
+    const [loading , setLoading] = useState(true)
+    useEffect(() => {
+      fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid)
+        .then(response => response.json())
+        .then(json => {
+          setData(json);
+          setLoading(false)
+        });
+    }, [])
+
     return <SafeAreaView style={styles.container}>
-        <Header/>
+
     <View style={styles.body}>
-        
         <View style={{ justifyContent: 'space-between' ,flexDirection: 'row',  alignItems :'center' ,marginBottom:5}}>
             <TouchableOpacity style={{left:0}} onPress={(props) => {navigation.goBack(null) }}>
                 <AntDesign  style={{ marginRight:'auto'}}name="arrowleft" size={30} color="#68D25F" />
@@ -83,7 +96,7 @@ const RestuView = ({route, navigation}) => {
          
             <View style={{marginTop:12,flex:1}}>
                 <Text style={{fontSize:18, fontWeight:'bold', color:'#CBCBCB'}}>Other Reviews</Text>
-                <RenderReview></RenderReview>
+                {loading ? <View style={{flex:1 , alignItems:'center' , justifyContent:'center'}}><Progress.Circle color="#68D25F" size={30} indeterminate={true} /><Text style={{color: '#68D25F'}}>Loading reviews..</Text></View> : <RenderReview data={data}></RenderReview>}
             </View> 
         </ScrollView>   
         </View>

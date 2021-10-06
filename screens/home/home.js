@@ -1,10 +1,11 @@
 
-import { Entypo } from '@expo/vector-icons'; 
+
 import { FontAwesome } from '@expo/vector-icons'; 
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import React, { useState , useEffect } from "react";
 import { StyleSheet,ImageBackground , TouchableOpacity ,FlatList,Text, View } from 'react-native';
+import * as Progress from 'react-native-progress';
 
   const StarRender = ({many}) => {
           let array = []
@@ -17,12 +18,12 @@ import { StyleSheet,ImageBackground , TouchableOpacity ,FlatList,Text, View } fr
           }
           return array
     }
-  const Item = ({phone, name, image , stars , address ,navigation }) => {
+  const Item = ({phone, name, image , stars , address ,navigation , rid }) => {
 
     return (
     <View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('RestuView' , { phone : phone, name : name , image : image , stars : stars , address : address  })}  style={styles.item}>
+      <TouchableOpacity onPress={() => navigation.navigate('RestuView' , { rid : rid ,phone : phone, name : name , image : image , stars : stars , address : address  })}  style={styles.item}>
              <ImageBackground 
                 resizeMode = 'cover'
                 style={styles.itemImage}
@@ -47,19 +48,8 @@ import { StyleSheet,ImageBackground , TouchableOpacity ,FlatList,Text, View } fr
     )}
   
   
-const Home =({navigation}) => {
-  const [data , setData] = useState()
+const Home =({navigation , data , loading}) => {
 
-  useEffect(() => {
-    fetch("http://192.168.0.88:8000/api/resturants")
-      .then(response => response.json())
-      .then(json => {
-        setData(json);
-      });
-  }, [])
-
-  console.log(data)
-  
   const [active, setActive] = useState({
     elm0 : true,
     elm1 : false
@@ -75,8 +65,7 @@ const Home =({navigation}) => {
   }
 
     const renderItem = ({ item }) => {
-
-        return (<Item navigation={navigation} stars={item.stars} phone={item.phone} image={item.pic} address={item.address} name={item.name} />)
+        return (<Item  navigation={navigation} rid={item.id} stars={item.stars} phone={item.phone} image={item.pic} address={item.address} name={item.name} />)
       }
 
    return <View style={styles.container}>
@@ -90,11 +79,14 @@ const Home =({navigation}) => {
                     <Text style={styles.dashboard}>Reviewed</Text>
                   </TouchableOpacity>   
                 </View>
+                {loading ? <View style={{flex:1 , alignItems:'center' , justifyContent:'center'}}><Progress.Circle color="#68D25F" size={30} indeterminate={true} /><Text style={{color: '#68D25F'}}>Loading resturants, please wait..</Text></View> : 
                 <FlatList
                     data={data}
                     renderItem={renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={(item, index) => console.log('item'+index)}
+
                 />
+              }
             </View>
         </View>
 

@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import Splash from './screens/splash/splash'
 import SignUp from './screens/signup/signup'
-
 import Login from './screens/login/login'
 import RestuView from './screens/home/restuview'
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -13,6 +12,7 @@ import Landing from './screens/landing'
 
 const Stack  = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
 const Auth = ({navigation}) => {
 
   return (
@@ -31,6 +31,7 @@ const Auth = ({navigation}) => {
   )
 }
 export default function App() {
+  
   return ( 
     
     <NavigationContainer>
@@ -56,7 +57,7 @@ export default function App() {
           // Hiding header for Navigation Drawer
           options={{headerShown: false}}
         />
-        <Stack.Screen
+        <Stack.Screen 
           name="RestuView"
           component={RestuView}
           // Hiding header for Navigation Drawer
