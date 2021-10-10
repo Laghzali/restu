@@ -1,0 +1,6 @@
+// MAKE REVIEW IMAGES VISIBLE
+// MAKE REVIEWS RATING VISIBLE
+//FIX SCROLLAREA
+//VALIDATE REVIEW REQUEST // PARAMS  !important
+//MAKE Review arrows functional
+//KeyboardAvoidView

@@ -4,17 +4,18 @@ import { FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import React, { useState , useEffect } from "react";
-import { StyleSheet,ImageBackground , TouchableOpacity ,FlatList,Text, View } from 'react-native';
+import { StyleSheet,ImageBackground , Dimensions, TouchableOpacity ,FlatList,Text, View } from 'react-native';
 import * as Progress from 'react-native-progress';
+const windowHeight = Dimensions.get('window').height;
 
   const StarRender = ({many}) => {
           let array = []
           let max = 5
           for (let x = 0 ;  x<many ; x++) {
-            array.push(<FontAwesome name="star" size={18} color="yellow" />)
+            array.push(<FontAwesome key={x+new Date()} name="star" size={18} color="#68D25F" />)
           }
           for(let y = 0 ; y < max-many ; y++) {
-            array.push(<Feather name="star" size={18} color="yellow" />)
+            array.push(<Feather key={y} name="star" size={18} color="#68D25F" />)
           }
           return array
     }
@@ -80,7 +81,8 @@ const Home =({navigation , data , loading}) => {
   }
 
     const renderItem = ({ item }) => {
-        return (<Item  
+        return (<Item
+           id={item.id}
            navigation={navigation}
            rid={item.id} stars={item.stars} 
            phone={item.phone} 
@@ -115,8 +117,7 @@ const Home =({navigation , data , loading}) => {
                 <FlatList
                     data={data}
                     renderItem={renderItem}
-                    keyExtractor={(item, index) => console.log('item'+index)}
-
+                    keyExtractor={(item, index) => 'key'+item.id}
                 />
               }
             </View>
@@ -127,7 +128,7 @@ const Home =({navigation , data , loading}) => {
 const styles = StyleSheet.create({
 
     container : {
-                
+                maxHeight:windowHeight,
                 flex: 1,
                 backgroundColor : '#272121'     
     },

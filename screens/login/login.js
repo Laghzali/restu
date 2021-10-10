@@ -1,6 +1,7 @@
 
 import React, {useState } from 'react';
-import { StyleSheet,Text , Button, View ,TextInput } from 'react-native';
+import { StyleSheet,Text , TextInput, Button, View } from 'react-native';
+
 import LoginBg from './loginBg';
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
@@ -39,7 +40,7 @@ const Login =({navigation}) => {
                     <View style={styles.inputFields}>
                        <View style={styles.inputContainer}>
                         <AntDesign name="user" size={18} color="#68D25F" />    
-                        <TextInput
+                        <TextInput mode="outlined" outlineColor="green"
                         onChangeText={(UserEmail) =>
                             setUserEmail(UserEmail)
                           }
@@ -50,7 +51,7 @@ const Login =({navigation}) => {
 
                       <View style={styles.inputContainer}>
                       <Feather name="hash" size={18} color="#68D25F" />
-                        <TextInput
+                        <TextInput mode="outlined" outlineColor="green"
                         onChangeText={(UserPass) =>
                         setUserPass(UserPass)
                         }
@@ -97,12 +98,13 @@ const styles = StyleSheet.create({
                 backgroundColor:'rgb(255,255,255)'
             },
             input : {
-
+                borderWidth : 0,
                 fontFamily: 'sans-serif',
                 width : '100%',
                 height : 30,
                 borderBottomWidth : 1,
                 borderColor : '#68D25F'
+
             }, 
             inputFields : {
 

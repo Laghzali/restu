@@ -1,41 +1,56 @@
 import React, { useState , useRef,  useEffect} from "react";
-import { StyleSheet,Text,Image,Dimensions, TextInput ,Button,SafeAreaView,ScrollView,ImageBackground, View } from 'react-native';
+import { StyleSheet,Text,Image,SafeAreaView,Dimensions , ScrollView,ImageBackground, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { Entypo } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons'; 
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native";
 import * as Progress from 'react-native-progress';
 import * as ImagePicker from 'expo-image-picker';
 import {Platform} from 'react-native';
+import {Overlay } from 'react-native-elements';
+import { IconButton } from 'react-native-paper';
+
+const windowHeight = Dimensions.get('window').height;
+const screenHeight = Dimensions.get('screen').height;
+const navbarHeight = screenHeight - windowHeight
 const mid = 1;
 
-
-const RenderReview = ({data}) => {
-    let review = []
-    for(var item in data) {
-
-        review.push(
-            <View style={{flexDirection: 'row', marginTop:15, alignItems:'center'}}>
-            <Image style={{width:35,height:35,borderRadius:50}}source={{
-                    uri: data[item].pic,
-                    }}></Image>
-            <Text style={{padding:5,
-                width:'75%',color:'#CBCBCB', 
-                backgroundColor:'rgba(196, 196, 196, 0.31)', 
-                borderWidth:1,borderRadius:3,marginLeft:5,height:'auto'}}>{data[item].note}</Text>
-            <TouchableOpacity><Entypo name="arrow-bold-up" size={24} color="#68D25F" /></TouchableOpacity>
-            <TouchableOpacity><Entypo name="arrow-bold-down" size={24} color="#68D25F" /></TouchableOpacity>
-        </View>
-        )
-    }
-    return review
-}
-
 const RestuView = ({route, navigation}) => {
-    const [file , setFile] = useState( { name : null , uri : null , type : null})
+    
+    
+    const [visible , setVisible] = useState({id : null , visible : false})
+    const toggle = (id) => {
+        setVisible({id : id , visible : !!visible})
+    }
+
+    const RenderReview = ({data}) => {
+        return data.map((data , index) => {
+
+            return (
+                <View key={'key'+index} style={{flexDirection: 'row', marginTop:15, alignItems:'center'}}>
+                <Image style={{borderColor:'rgba(104, 210, 95,0.5)',borderWidth:1,width:35,height:35,borderRadius:50}}source={{
+                        uri: data.mpic,
+                        }}></Image>
+                <TouchableOpacity style={{width:'88%'}} onPress={() => toggle(data.id)}>
+                    <Text style={{padding:5,
+                    flexGrow:1,
+                        width:'100%',color:'#CBCBCB', 
+                        backgroundColor:'rgba(196, 196, 196, 0.11)', 
+                        borderWidth:1,borderRadius:3,marginLeft:5 , borderColor:'rgba(104, 210, 95, 0.22)'}}>{data.note}
+                    </Text>
+                </TouchableOpacity>
+                <Overlay  onBackdropPress={toggle}  isVisible={visible.id == data.id ? visible.visible : false}>
+                 <Image  style={{width: Dimensions .get('window').width - 50 ,height:320}} source={{uri : data.pic , scale :1}}></Image>
+                </Overlay>   
+                </View>         
+            )})
+    
+    }
+    const [file , setFile] = useState( { isSet : false , name : null , uri : null , type : null})
     const [note , setNote] = useState(null)
-    const [stars , setStars] = useState(null)
+    const [stars , setStars] = useState(0)
 
     const RatingHandler = (x) => {
             let rating = x          
@@ -46,10 +61,10 @@ const RestuView = ({route, navigation}) => {
         let max = 5
         for (let x = 1 ;  x<=max ; x++) {
             if(x >= stars+1) {
-                array.push(<TouchableOpacity onPress={() => RatingHandler(x)}><Feather name="star" size={22} color="yellow" /></TouchableOpacity>)
+                array.push(<TouchableOpacity key={'key'+x} onPress={() => RatingHandler(x)}><Feather name="star" size={22} color="#68D25F" /></TouchableOpacity>)
                 
             } else {
-                array.push(<TouchableOpacity onPress={() => RatingHandler(x)}><FontAwesome name="star" size={22} color="yellow" /></TouchableOpacity>)
+                array.push(<TouchableOpacity key={x} onPress={() => RatingHandler(x)}><FontAwesome name="star" size={22} color="#68D25F" /></TouchableOpacity>)
 
 
             }
@@ -87,7 +102,7 @@ const RestuView = ({route, navigation}) => {
             let filename = localUri.split('/').pop();
             let match = /\.(\w+)$/.exec(filename);
             let type = match ? `image/${match[1]}` : `image`;
-            setFile({ name : filename , uri : localUri , type : type})
+            setFile({ name : filename , uri : localUri , type : type , isSet : true})
              }
         
         });
@@ -108,7 +123,9 @@ const RestuView = ({route, navigation}) => {
 
     let uploadImage = async () => {
         //Check if any file is selected or not
-        if (file != null) {
+
+        if (file != null && stars > 0 && note.length > 0) {
+            
             setLoading(true)
           //If file selected then create FormData
           const data = new FormData();
@@ -129,18 +146,19 @@ const RestuView = ({route, navigation}) => {
           );
 
           let responseJson = await res.json();
-            console.log(responseJson)
+          
           if (responseJson.status == 200) {
             fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid)
                 .then(response => response.json())
                 .then(json => {
                 setData(json);
+                setFile({isSet : false , name : null , uri : null , type : null})
                 setLoading(false)
         });
           }
         } else {
           //if no file selected the show alert
-          alert('Please Select File first');
+          alert('Please check your review');
         }
     };
 
@@ -148,7 +166,7 @@ const RestuView = ({route, navigation}) => {
     return <SafeAreaView style={styles.container}>
 
     <View style={styles.body}>
-        <View style={{ justifyContent: 'space-between' ,flexDirection: 'row',  alignItems :'center' ,marginBottom:5}}>
+        <View style={{ justifyContent: 'space-between' ,flexDirection: 'row',  alignItems :'center' ,marginBottom:navbarHeight}}>
             <TouchableOpacity style={{left:0}} onPress={(props) => {navigation.goBack(null) }}>
                 <AntDesign  style={{ marginRight:'auto'}}name="arrowleft" size={30} color="#68D25F" />
             </TouchableOpacity>
@@ -158,8 +176,8 @@ const RestuView = ({route, navigation}) => {
         {/*SCROLL */}
 
         
-        <View style={{flexGrow:1}}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1}} showsVerticalScrollIndicator={false}>
+        <View style={{flexGrow:1 }}>
+        <ScrollView contentContainerStyle={{marginVertical:40, flexGrow: 1 }} showsVerticalScrollIndicator={false}>
             <ImageBackground 
                 resizeMode = 'cover'
                 style={styles.itemImage}
@@ -180,23 +198,26 @@ const RestuView = ({route, navigation}) => {
 
             <View style={styles.inputContainer}>
 
-                    <TextInput onChangeText={(note) =>setNote(note)}  style={styles.inputarea} multiline placeholder="Please write a review" />
+                    <TextInput underlineColor = 'green' onChangeText={(note) =>setNote(note)}  style={styles.inputarea} multiline placeholder="Please write a review" />
             </View> 
                 <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                     <TouchableOpacity onPress={pickFile}>
-                     <Entypo name="camera" size={30} color="#68D25F" />
+                     <Entypo name="camera" size={25} color={ file.isSet ? "red" : "#68D25F"} />
                     </TouchableOpacity>
 
-                    <Button onPress={uploadImage} color='#68D25F' title="Submit"></Button>
+                    <IconButton
+                     style ={{backgroundColor:'transparent'  ,height:25 , borderRadius:5}}
+                     onPress={uploadImage} color='#68D25F' icon="send"></IconButton>
                 </View>
          
-            <View style={{marginTop:12,flex:1}}>
+            <View style={{marginTop:12,flex:1 , marginBottom : navbarHeight}}>
                 <Text style={{fontSize:18, fontWeight:'bold', color:'#CBCBCB'}}>Other Reviews</Text>
                 {loading ? <View style={{flex:1 , alignItems:'center' , justifyContent:'center'}}>
                     <Progress.Circle color="#68D25F" size={30} indeterminate={true} />
                     <Text style={{color: '#68D25F'}}>Loading reviews..</Text>
-                    </View> : <RenderReview data={data}></RenderReview>}
+                    </View> : <RenderReview  data={data}></RenderReview>}
             </View> 
+            <View style={{marginBottom:10}}/>
         </ScrollView>   
         </View>
                   
@@ -219,6 +240,7 @@ inputarea : {
         backgroundColor:'rgba(196, 196, 196, 0.31)'
 },    
 container : {
+
     flex: 1,
     backgroundColor : '#272121'     
 },
@@ -241,7 +263,7 @@ restuname : {
     fontSize:20,
 },
 body : {
-    height:'auto',
+
     padding:10,
     flex:1
 }, 
@@ -268,7 +290,7 @@ stars : {
     justifyContent:'flex-end',
     alignItems:'center',
     flex:1,
-    color : '#CBCBCB',
+    color : '#68D25F',
 
     fontSize : 12
 }
