@@ -1,7 +1,6 @@
 
 import React, {useState } from 'react';
-import { StyleSheet,Text , TextInput, Button, View } from 'react-native';
-
+import { StyleSheet,Text ,  TextInput, Button, View } from 'react-native';
 import LoginBg from './loginBg';
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
@@ -16,17 +15,36 @@ import {
 const Login =({navigation}) => {
     const [userEmail, setUserEmail] = useState('');
     const [userPassword, setUserPass] = useState('');
-    const DATA = {
-        userEmail : 'x',
-        userPass : 'x'
-    }
-    const handleSubmit = () => {
-        if(userEmail == DATA.userEmail  && userPassword == DATA.userPass) {
-            AsyncStorage.setItem('user_id', DATA.userEmail);
-            navigation.replace('Landing');
-        } else {
-            alert('???')
-        }
+    const [logged , setLogged] = useState(false)
+    const getLogin =  () => {
+    
+         fetch('http://192.168.0.88:8000/api/login', {
+            method: 'POST', 
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({'user' : userEmail , 'pass' : userPassword }),
+          })
+          .then(response => response.json())
+          .then(data => {
+              if(data.status == 'admin') {
+                AsyncStorage.setItem('mid','admin');
+                navigation.replace('Admin' , {mid : data.mid});
+              }
+              if(data.status==200) {
+                AsyncStorage.setItem('mid', data.mid.toString());
+                navigation.replace('Landing' , {mid : data.mid});
+              }
+              if(data.status == 500) {
+                  alert('wrong email or pass')
+              }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('erro')
+
+          });
+
     }
     let [fontsLoaded] = useFonts({
         Inter_900Black
@@ -64,7 +82,7 @@ const Login =({navigation}) => {
                     </View>
 
                     <Button 
-                        onPress={handleSubmit}
+                        onPress={getLogin}
                         title="Sign in"
                         color="#68D25F"
                         accessibilityLabel="Learn more about this purple button"

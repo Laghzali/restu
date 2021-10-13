@@ -8,8 +8,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Landing from './screens/landing'
-
-
+import Admin from './screens/admin'
+import SelectMemebers from './screens/SelectMemebers'
 const Stack  = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -54,6 +54,18 @@ export default function App() {
         <Stack.Screen
           name="Landing"
           component={Landing}
+          // Hiding header for Navigation Drawer
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Admin"
+          component={Admin}
+          // Hiding header for Navigation Drawer
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="SelectMembers"
+          component={SelectMemebers}
           // Hiding header for Navigation Drawer
           options={{headerShown: false}}
         />

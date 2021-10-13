@@ -1,5 +1,5 @@
 import React, { useState , useRef,  useEffect} from "react";
-import { StyleSheet,Text,Image,SafeAreaView,Dimensions , ScrollView,ImageBackground, View } from 'react-native';
+import { StyleSheet,Text, findNodeHandle ,KeyboardAvoidingView, Image,SafeAreaView,Dimensions , ScrollView,ImageBackground, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { Entypo } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons'; 
@@ -12,14 +12,17 @@ import {Platform} from 'react-native';
 import {Overlay } from 'react-native-elements';
 import { IconButton } from 'react-native-paper';
 
-const windowHeight = Dimensions.get('window').height;
-const screenHeight = Dimensions.get('screen').height;
-const navbarHeight = screenHeight - windowHeight
+
+
+
 const mid = 1;
 
 const RestuView = ({route, navigation}) => {
-    
-    
+    const scroll= useRef()
+    function _scrollToInput (reactNode) {
+        alert(scroll.current)
+        
+      }
     const [visible , setVisible] = useState({id : null , visible : false})
     const toggle = (id) => {
         setVisible({id : id , visible : !!visible})
@@ -111,7 +114,7 @@ const RestuView = ({route, navigation}) => {
 
     const [data , setData] = useState()
     const [loading , setLoading] = useState(true)
-
+    const [postButtonDisabled , setPostButtonDisabled] = useState(false)
     useEffect(() => {
       fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid)
         .then(response => response.json())
@@ -123,7 +126,7 @@ const RestuView = ({route, navigation}) => {
 
     let uploadImage = async () => {
         //Check if any file is selected or not
-
+        setPostButtonDisabled(true)
         if (file != null && stars > 0 && note.length > 0) {
             
             setLoading(true)
@@ -139,9 +142,7 @@ const RestuView = ({route, navigation}) => {
             {
               method: 'post',
               body: data,
-              headers: {
-                'Content-Type': 'multipart/form-data; ',
-              }
+              
             }
           );
 
@@ -154,6 +155,7 @@ const RestuView = ({route, navigation}) => {
                 setData(json);
                 setFile({isSet : false , name : null , uri : null , type : null})
                 setLoading(false)
+                setPostButtonDisabled(false)
         });
           }
         } else {
@@ -166,7 +168,7 @@ const RestuView = ({route, navigation}) => {
     return <SafeAreaView style={styles.container}>
 
     <View style={styles.body}>
-        <View style={{ justifyContent: 'space-between' ,flexDirection: 'row',  alignItems :'center' ,marginBottom:navbarHeight}}>
+        <View style={{ justifyContent: 'space-between' ,flexDirection: 'row',  alignItems :'center' }}>
             <TouchableOpacity style={{left:0}} onPress={(props) => {navigation.goBack(null) }}>
                 <AntDesign  style={{ marginRight:'auto'}}name="arrowleft" size={30} color="#68D25F" />
             </TouchableOpacity>
@@ -176,8 +178,11 @@ const RestuView = ({route, navigation}) => {
         {/*SCROLL */}
 
         
-        <View style={{flexGrow:1 }}>
-        <ScrollView contentContainerStyle={{marginVertical:40, flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+        <View style={{flex:1 }}>
+        <KeyboardAvoidingView style={{ flex: 1, flexDirection: 'column',justifyContent: 'center',}} behavior="padding" enabled   keyboardVerticalOffset={50}>
+
+        <ScrollView contentContainerStyle={{ flexGrow: 1}} showsVerticalScrollIndicator={false}>
+            <View style={{flex:1, paddingBottom:10}}>
             <ImageBackground 
                 resizeMode = 'cover'
                 style={styles.itemImage}
@@ -195,30 +200,34 @@ const RestuView = ({route, navigation}) => {
                     <StarRender many={route.params.stars}></StarRender>
                 </View>      
             </View>
-
+             
             <View style={styles.inputContainer}>
 
-                    <TextInput underlineColor = 'green' onChangeText={(note) =>setNote(note)}  style={styles.inputarea} multiline placeholder="Please write a review" />
+                    <TextInput  underlineColor = 'green' onChangeText={(note) =>setNote(note)}  style={styles.inputarea} multiline placeholder="Please write a review" />
             </View> 
+           
                 <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                    <TouchableOpacity onPress={pickFile}>
+                    <TouchableOpacity disabled={postButtonDisabled} onPress={pickFile}>
                      <Entypo name="camera" size={25} color={ file.isSet ? "red" : "#68D25F"} />
                     </TouchableOpacity>
 
                     <IconButton
+                     disabled={postButtonDisabled}
                      style ={{backgroundColor:'transparent'  ,height:25 , borderRadius:5}}
                      onPress={uploadImage} color='#68D25F' icon="send"></IconButton>
                 </View>
          
-            <View style={{marginTop:12,flex:1 , marginBottom : navbarHeight}}>
+            <View style={{marginTop:12,flex:1}}>
                 <Text style={{fontSize:18, fontWeight:'bold', color:'#CBCBCB'}}>Other Reviews</Text>
                 {loading ? <View style={{flex:1 , alignItems:'center' , justifyContent:'center'}}>
                     <Progress.Circle color="#68D25F" size={30} indeterminate={true} />
                     <Text style={{color: '#68D25F'}}>Loading reviews..</Text>
                     </View> : <RenderReview  data={data}></RenderReview>}
             </View> 
-            <View style={{marginBottom:10}}/>
+            
+           </View> 
         </ScrollView>   
+        </KeyboardAvoidingView>
         </View>
                   
     </View>
@@ -228,13 +237,13 @@ const RestuView = ({route, navigation}) => {
 const styles = StyleSheet.create({
     inputContainer : {
         marginTop:10,
-        height:'15%',
+        height:120,
         marginBottom:5    
     }   ,
 inputarea : {
     color: '#CBCBCB',
         borderRadius:3,
-        padding:10,
+        padding:0,
         height:'100%',
         textAlignVertical: 'top',
         backgroundColor:'rgba(196, 196, 196, 0.31)'

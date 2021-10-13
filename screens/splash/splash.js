@@ -14,10 +14,11 @@ const Splash = ({navigation}) => {
        //Check if user_id is set or not
        //If not then send for Authentication
        //else send to Home Screen
-       AsyncStorage.getItem('user_id').then((value) =>
-         navigation.replace(
+
+       AsyncStorage.getItem('mid').then((value) =>
+        { if(value === 'admin') {navigation.replace('Admin')} else {navigation.replace(
            value === null ? 'Auth' : 'Landing'
-         ),
+         )}},
        );
      }, 1000);
    }, []);

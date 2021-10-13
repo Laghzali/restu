@@ -64,7 +64,7 @@ const windowHeight = Dimensions.get('window').height;
     )}
   
   
-const Home =({navigation , data , loading}) => {
+const Home =({navigation , data, loading}) => {
 
   const [active, setActive] = useState({
     elm0 : true,
@@ -82,9 +82,9 @@ const Home =({navigation , data , loading}) => {
 
     const renderItem = ({ item }) => {
         return (<Item
-           id={item.id}
+           id={item.rid}
            navigation={navigation}
-           rid={item.id} stars={item.stars} 
+           rid={item.rid} stars={item.stars} 
            phone={item.phone} 
            image={item.pic} 
            address={item.address}

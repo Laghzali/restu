@@ -12,18 +12,21 @@ const Logout = ({navigation}) => {
 
 const Drawer = createDrawerNavigator();
 
-const Landing = ({navigation}) => {
+const Landing = ({route, navigation}) => {
+ 
   const [data , setData] = useState("")
   const [isLoading , setLoading] = useState(true)
   const HomeScreen = () => <Home data={data} loading={isLoading} navigation={navigation}></Home>
-  useEffect(() => {
-  fetch("http://192.168.0.88:8000/api/resturants")
+  useEffect(() => { AsyncStorage.getItem('mid').then( mid => {
+  
+  fetch("http://192.168.0.88:8000/api/retrive/toreview?mid=" + mid)
     .then(response => response.json())
     .then(json => {
       setData(json);
       setLoading(false)
     });
-  }, [])
+  
+}) }, [])
     return (
        
             <Drawer.Navigator screenOptions={{

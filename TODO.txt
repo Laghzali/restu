@@ -1,6 +1,10 @@
-// MAKE REVIEW IMAGES VISIBLE
-// MAKE REVIEWS RATING VISIBLE
-//FIX SCROLLAREA
-//VALIDATE REVIEW REQUEST // PARAMS  !important
-//MAKE Review arrows functional
-//KeyboardAvoidView
+x// MAKE REVIEW IMAGES VISIBLE
+x// MAKE REVIEWS RATING VISIBLE
+x//FIX SCROLLAREA
+x//VALIDATE REVIEW REQUEST // PARAMS  !important
+x//KeyboardAvoidView
+x//SEARCH OPTIONS
+x//MEMBER SELECT
+x//fix rid undefined maybe groupby rid
+//search by buttons indication
+//redo review image upload . broken for literaly no reason
