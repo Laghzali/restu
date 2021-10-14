@@ -94,7 +94,8 @@ const RestuView = ({route, navigation}) => {
         let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           type : 'image',
-          allowsEditing: true,
+          cropping: false,
+          allowsEditing: false,
           aspect: [4, 3],
           quality: 1,
         }).then(rez => {
@@ -135,7 +136,7 @@ const RestuView = ({route, navigation}) => {
           data.append('note', note);
           data.append('mid', mid);
           data.append('rid', route.params.rid);
-          data.append('pic', { name : file.name , uri : file.uri , type : file.type});
+          data.append('pic', { name : file.name , uri : Platform.OS === "android" ? file.uri : file.uri.replace("file://", "") , type : file.type});
           data.append('rate', stars);
           let res = await fetch(
             'http://192.168.0.88:8000/api/review/new',

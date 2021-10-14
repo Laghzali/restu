@@ -6,5 +6,7 @@ x//KeyboardAvoidView
 x//SEARCH OPTIONS
 x//MEMBER SELECT
 x//fix rid undefined maybe groupby rid
+x//redo review image upload . broken for literaly no reason
 //search by buttons indication
-//redo review image upload . broken for literaly no reason
+//remove rid from toreview when review submited
+//fix Currently we support only numbers in height prop
