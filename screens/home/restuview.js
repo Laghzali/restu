@@ -18,23 +18,19 @@ import { IconButton } from 'react-native-paper';
 const mid = 1;
 
 const RestuView = ({route, navigation}) => {
-    const scroll= useRef()
-    function _scrollToInput (reactNode) {
-        alert(scroll.current)
-        
-      }
+
     const [visible , setVisible] = useState({id : null , visible : false})
     const toggle = (id) => {
         setVisible({id : id , visible : !!visible})
     }
 
+
     const RenderReview = ({data}) => {
         return data.map((data , index) => {
-
             return (
                 <View key={'key'+index} style={{flexDirection: 'row', marginTop:15, alignItems:'center'}}>
                 <Image style={{borderColor:'rgba(104, 210, 95,0.5)',borderWidth:1,width:35,height:35,borderRadius:50}}source={{
-                        uri: data.mpic,
+                        uri:'http://192.168.0.88:8000/storage/user.png',
                         }}></Image>
                 <TouchableOpacity style={{width:'88%'}} onPress={() => toggle(data.id)}>
                     <Text style={{padding:5,
@@ -116,14 +112,14 @@ const RestuView = ({route, navigation}) => {
     const [data , setData] = useState()
     const [loading , setLoading] = useState(true)
     const [postButtonDisabled , setPostButtonDisabled] = useState(false)
-    useEffect(() => {
+    useEffect( () => {
       fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid)
         .then(response => response.json())
         .then(json => {
           setData(json);
           setLoading(false)
-        });
-    }, [])
+        });} , [])
+    
 
     let uploadImage = async () => {
         //Check if any file is selected or not
@@ -150,12 +146,14 @@ const RestuView = ({route, navigation}) => {
           let responseJson = await res.json();
           
           if (responseJson.status == 200) {
+            fetch("http://192.168.0.88:8000/api/reviewd?rid="+route.params.rid+"&mid="+mid)
             fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid)
                 .then(response => response.json())
                 .then(json => {
                 setData(json);
                 setFile({isSet : false , name : null , uri : null , type : null})
                 setLoading(false)
+                alert('Review succesfully sent!')
                 setPostButtonDisabled(false)
         });
           }
@@ -170,7 +168,7 @@ const RestuView = ({route, navigation}) => {
 
     <View style={styles.body}>
         <View style={{ justifyContent: 'space-between' ,flexDirection: 'row',  alignItems :'center' }}>
-            <TouchableOpacity style={{left:0}} onPress={(props) => {navigation.goBack(null) }}>
+            <TouchableOpacity style={{left:0}} onPress={(props) => {navigation.navigate('Home') }}>
                 <AntDesign  style={{ marginRight:'auto'}}name="arrowleft" size={30} color="#68D25F" />
             </TouchableOpacity>
             <Text style={styles.restuname}>{route.params.title}</Text>  
@@ -188,7 +186,7 @@ const RestuView = ({route, navigation}) => {
                 resizeMode = 'cover'
                 style={styles.itemImage}
                 source={{
-                uri: route.params.image
+                uri: route.params.image.length < 1 ? 'https://icons.iconarchive.com/icons/graphicloads/colorful-long-shadow/256/Restaurant-icon.png' : route.params.image
                 }}
             >
             </ImageBackground > 
@@ -245,7 +243,7 @@ inputarea : {
     color: '#CBCBCB',
         borderRadius:3,
         padding:0,
-        height:'100%',
+flex:1,
         textAlignVertical: 'top',
         backgroundColor:'rgba(196, 196, 196, 0.31)'
 },    

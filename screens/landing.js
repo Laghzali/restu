@@ -13,24 +13,30 @@ const Logout = ({navigation}) => {
 const Drawer = createDrawerNavigator();
 
 const Landing = ({route, navigation}) => {
- 
-  const [data , setData] = useState("")
-  const [isLoading , setLoading] = useState(true)
-  const HomeScreen = () => <Home data={data} loading={isLoading} navigation={navigation}></Home>
-  useEffect(() => { AsyncStorage.getItem('mid').then( mid => {
-  
-  fetch("http://192.168.0.88:8000/api/retrive/toreview?mid=" + mid)
-    .then(response => response.json())
-    .then(json => {
-      setData(json);
-      setLoading(false)
-    });
-  
-}) }, [])
+  const [data, setData] = useState({ data : null , count : null , isLoading : true})
+
+  const fetchData =  () => {
+
+        AsyncStorage.getItem('mid').then(mid => { 
+        //fix this contuniously fetching...
+        fetch("http://192.168.0.88:8000/api/retrive/toreview?mid=" + mid)
+        .then(response => response.json())
+        .then(json => setData({data : json , count : json.length , isLoading : false}))
+    
+      } )
+
+  }
+  useEffect(  () =>  fetchData() , [] ) 
+
+  const Head = ({navigation}) => {  
+    return (<Header navigation={navigation} count={data.count} />)
+  }
+  const HomeScreen = () => <Home data={data.data} isLoading={data.isLoading} navigation={navigation}></Home>
+
     return (
        
             <Drawer.Navigator screenOptions={{
-              header : Header,
+              header : Head,
               drawerStyle: {
                 color : 'brown',
                 width: 240,

@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import React, { useState , useEffect } from "react";
 import { StyleSheet,ImageBackground , Dimensions, TouchableOpacity ,FlatList,Text, View } from 'react-native';
 import * as Progress from 'react-native-progress';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const windowHeight = Dimensions.get('window').height;
 
   const StarRender = ({many}) => {
@@ -35,7 +36,7 @@ const windowHeight = Dimensions.get('window').height;
                 resizeMode = 'cover'
                 style={styles.itemImage}
                 source={{
-                uri: decodeURI(image),
+                uri: image.length < 1 ? 'https://icons.iconarchive.com/icons/graphicloads/colorful-long-shadow/256/Restaurant-icon.png' : decodeURI(image),
                 }}
             >
               <LinearGradient 
@@ -64,7 +65,7 @@ const windowHeight = Dimensions.get('window').height;
     )}
   
   
-const Home =({navigation , data, loading}) => {
+const Home =({data, isLoading,navigation}) => {
 
   const [active, setActive] = useState({
     elm0 : true,
@@ -108,17 +109,18 @@ const Home =({navigation , data, loading}) => {
                     <Text style={styles.dashboard}>Reviewed</Text>
                   </TouchableOpacity>   
                 </View>
-                {loading ? <View style={{
+                {isLoading ? <View style={{
                   flex:1 , 
                   alignItems:'center' , 
                   justifyContent:'center'}}>
                   <Progress.Circle color="#68D25F" size={30} indeterminate={true} />
                     <Text style={{color: '#68D25F'}}>Loading resturants, please wait..</Text></View> : 
+                 data.length > 0 ?
                 <FlatList
                     data={data}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => 'key'+item.id}
-                />
+                /> : <Text style={{justifyContent:'center' ,alignSelf : 'center', textAlign : 'center' , color:'white' , fontWeight : 'bold', padding:59 ,alignItems:'center'}}> You have nothing to review right now. Please check again later</Text>
               }
             </View>
         </View>

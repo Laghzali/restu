@@ -6,16 +6,18 @@ import { Feather } from '@expo/vector-icons';
 
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const Admin = ({navigation}) => {
-
-    let searchMethod = 'name';
+    const [disabled , setDisabled] = useState({ button : null , disabled : false})
+    const [searchMethod , setSearchMethod] = useState('name')
     const [loading , setLoading] = useState(false)
     const [resturant , setResturants] = useState()
     const selectedResturants = resturant 
-    const getData = (searchMethod, keyword) => {
-           
-            const url = "http://192.168.0.88:8000/api/resturants?method=" + searchMethod + "&keyword="+keyword
-            console.log(url)
+    const searchBy = (method , button) => {
+        setSearchMethod(method)
+        setDisabled({button : button , disabled : !disabled})
+    }
+    const getData = ( keyword) => {
             if (keyword.length > 2 ) {
+            const url = "http://192.168.0.88:8000/api/resturants?method=" + searchMethod + "&keyword="+keyword
             setLoading(true)
             fetch(url)
             .then(response => response.json())
@@ -23,6 +25,9 @@ const Admin = ({navigation}) => {
             setResturants(json);
             setLoading(false)
             }) }
+    }
+    const sendToAll = () => {
+
     }
     const sendResturantsToMemebers = () => {
         const toSend = []
@@ -57,11 +62,11 @@ const Admin = ({navigation}) => {
         <View style={styles.container}>
             <Text style={styles.panelText}>ADMIN PANEL</Text>
             <View style={styles.searchView}>
-                <TextInput onChangeText={(keyword) => getData(searchMethod , keyword)} underlineColor="green" style={styles.searchField} placeholder='Search resturants'></TextInput>
+                <TextInput onChangeText={(keyword) => {getData(keyword)}} underlineColor="green" style={styles.searchField} placeholder='Search resturants'></TextInput>
                 <View style={styles.searchOptions}>
                     <Text>Search by : </Text>
-                    <Button mode="contained" onPress={() => searchMethod = 'name'} style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Name</Button>
-                    <Button mode="contained" onPress={() => searchMethod = 'zip'}style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Zip</Button>
+                    <Button disabled={disabled.button == 1 ? true : false } mode="contained" onPress={() => {searchBy('name' , 1)}} style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Name</Button>
+                    <Button disabled={disabled.button == 2 ? true : false } mode="contained" onPress={() => {searchBy('zip', 2)}}style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Zip</Button>
                 </View>
             </View>
             <View style={styles.resturants}>
