@@ -1,18 +1,20 @@
-x// MAKE REVIEW IMAGES VISIBLE
-x// MAKE REVIEWS RATING VISIBLE
-x//FIX SCROLLAREA
-x//VALIDATE REVIEW REQUEST // PARAMS  !important
-x//KeyboardAvoidView
-x//SEARCH OPTIONS
-x//MEMBER SELECT
-x//fix rid undefined maybe groupby rid
-x//redo review image upload . broken for literaly no reason
-x//search by buttons indication
-x//remove rid from toreview when review submited
-x//bell icon functionality
-x//refresh button on home screen
-x//fix Currently we support only numbers in height prop https://github.com/callstack/react-native-paper/issues/2159
-x//fix fix this contuniously fetching in landing
-//logout button in admin
-//PUSH NOTIFICATION
-//add refresh button in home
+✅ // MAKE REVIEW IMAGES VISIBLE
+✅ // MAKE REVIEWS RATING VISIBLE
+✅ //FIX SCROLLAREA
+✅ //VALIDATE REVIEW REQUEST // PARAMS  !important
+✅ //KeyboardAvoidView
+✅ //SEARCH OPTIONS
+✅ //MEMBER SELECT
+✅ //fix rid undefined maybe groupby rid
+✅ //redo review image upload . broken for literaly no reason
+✅ //search by buttons indication
+✅ //remove rid from toreview when review submited
+✅ //bell icon functionality
+✅ //refresh button on home screen
+✅ //fix Currently we support only numbers in height prop https://github.com/callstack/react-native-paper/issues/2159
+✅ //fix fix this contuniously fetching in landing
+❌//logout button in admin
+✅//PUSH NOTIFICATION
+✅ //add refresh button in home
+✅//FIX COUNT
+✅//REDUCE DATAFETCHING TIMES

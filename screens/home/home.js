@@ -3,12 +3,12 @@
 import { FontAwesome } from '@expo/vector-icons'; 
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import React, { useState , useEffect } from "react";
-import { StyleSheet,ImageBackground , Dimensions, TouchableOpacity ,FlatList,Text, View } from 'react-native';
-import * as Progress from 'react-native-progress';
+import React, { useState , useCallback, useEffect } from "react";
+import { StyleSheet,RefreshControl ,ImageBackground , ScrollView, Dimensions, TouchableOpacity ,FlatList,Text, View } from 'react-native';
+import Header from '../header'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const windowHeight = Dimensions.get('window').height;
-
+AsyncStorage.getItem('count').then( count => console.log(count))
   const StarRender = ({many}) => {
           let array = []
           let max = 5
@@ -65,8 +65,42 @@ const windowHeight = Dimensions.get('window').height;
     )}
   
   
-const Home =({data, isLoading,navigation}) => {
+const Home = props => {
 
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshData , setRefreshData] = useState(true)
+  const [data , setData] = useState({})
+  const [count , setCount] = useState(0);
+  const refreshFlatList = () => {
+    setRefreshData(!refreshData)
+  }
+  const getData = () => {
+    
+    AsyncStorage.getItem('mid').then(mid => { 
+      console.log('fetching')
+      fetch("http://192.168.0.88:8000/api/retrive/toreview?mid=" + mid)
+      .then(response => response.json())
+      .then(json => {
+        setData(json)
+        setCount(json.length)
+        setRefreshing(false)
+      })
+  
+    } )
+
+  }
+
+  useEffect(  () =>  
+{
+
+  onRefresh() 
+
+}, [] ) 
+
+ const onRefresh = useCallback(async () => {
+      setRefreshing(true);
+      getData()
+      }, [refreshing]);
   const [active, setActive] = useState({
     elm0 : true,
     elm1 : false
@@ -84,7 +118,7 @@ const Home =({data, isLoading,navigation}) => {
     const renderItem = ({ item }) => {
         return (<Item
            id={item.rid}
-           navigation={navigation}
+           navigation={props.navigation}
            rid={item.rid} stars={item.stars} 
            phone={item.phone} 
            image={item.pic} 
@@ -93,7 +127,7 @@ const Home =({data, isLoading,navigation}) => {
       }
 
    return <View style={styles.container}>
-
+            <Header navigation={props.navigation} count={count}/>
             <View style={styles.body}>
                 <View style={styles.bodyNav}>
                   <TouchableOpacity  onPress={onPressActive} style={{ 
@@ -109,18 +143,25 @@ const Home =({data, isLoading,navigation}) => {
                     <Text style={styles.dashboard}>Reviewed</Text>
                   </TouchableOpacity>   
                 </View>
-                {isLoading ? <View style={{
-                  flex:1 , 
-                  alignItems:'center' , 
-                  justifyContent:'center'}}>
-                  <Progress.Circle color="#68D25F" size={30} indeterminate={true} />
-                    <Text style={{color: '#68D25F'}}>Loading resturants, please wait..</Text></View> : 
+                 { 
                  data.length > 0 ?
                 <FlatList
+                    extraData={refreshFlatList}
                     data={data}
                     renderItem={renderItem}
-                    keyExtractor={(item, index) => 'key'+item.id}
-                /> : <Text style={{justifyContent:'center' ,alignSelf : 'center', textAlign : 'center' , color:'white' , fontWeight : 'bold', padding:59 ,alignItems:'center'}}> You have nothing to review right now. Please check again later</Text>
+                    keyExtractor={(item, index) => {Math.floor(Math.random() * index+1)}}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                /> : <ScrollView
+                contentContainerStyle={styles.scrollView}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+              >
+                <Text style={{justifyContent:'center' ,alignSelf : 'center', textAlign : 'center' , color:'white' , fontWeight : 'bold', padding:59 ,alignItems:'center'}}> You have nothing to review right now. Pull down to refresh</Text>
+              </ScrollView>
               }
             </View>
         </View>
@@ -178,7 +219,13 @@ const styles = StyleSheet.create({
     titleName : {
       color : '#CBCBCB',
       fontWeight:'bold'
-    }
+    },
+    scrollView: {
+      flex: 1,
+
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
 
     
 })

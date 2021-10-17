@@ -168,7 +168,7 @@ const RestuView = ({route, navigation}) => {
 
     <View style={styles.body}>
         <View style={{ justifyContent: 'space-between' ,flexDirection: 'row',  alignItems :'center' }}>
-            <TouchableOpacity style={{left:0}} onPress={(props) => {navigation.navigate('Home') }}>
+            <TouchableOpacity style={{left:0}} onPress={() => {navigation.navigate('Home') }}>
                 <AntDesign  style={{ marginRight:'auto'}}name="arrowleft" size={30} color="#68D25F" />
             </TouchableOpacity>
             <Text style={styles.restuname}>{route.params.title}</Text>  

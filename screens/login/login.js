@@ -29,9 +29,12 @@ const Login =({navigation}) => {
           .then(data => {
               if(data.status == 'admin') {
                 AsyncStorage.setItem('mid','admin');
+                //initial count for push notifications check app.js line 142
+                AsyncStorage.setItem('count' , 0)
                 navigation.replace('Admin' , {mid : data.mid});
               }
               if(data.status==200) {
+                AsyncStorage.setItem('count' , '0')
                 AsyncStorage.setItem('mid', data.mid.toString());
                 navigation.replace('Landing' , {mid : data.mid});
               }

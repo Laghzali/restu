@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet,Text ,CheckBox , Button, View ,TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet,Text ,CheckBox , Button, View ,TextInput, TouchableOpacity, Alert } from 'react-native';
 import LoginBg from './loginBg';
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
@@ -10,12 +10,28 @@ import {
     Roboto_100Thin
   } from '@expo-google-fonts/inter';
 
-const SignUp =() => {
+const SignUp =({navigation}) => {
     const [isSelected, setSelection] = useState(false);
+    const [user, setUser] = useState('')
+    const [pass, setPass] = useState('')
+    const [phone, setPhone] = useState('')
+    const [name, setName] = useState('')
+
     let [fontsLoaded] = useFonts({
         Inter_900Black
       });
-    
+
+const handleSignup = async () => {
+    if(user && pass && name && phone ) {
+    let res = await fetch('http://192.168.0.88:8000/api/register'+`?user=${user}&pass=${pass}&name=${name}&phone=${phone}`)
+    let resJson = await res.json()
+    if(resJson.status == 200) {
+        alert('you have been successfuly registred')
+        navigation.replace('Auth')
+    }} else {
+        alert('Please fill all inputs')
+    }
+}    
    return <View style={{flex : 1,  backgroundColor:'white'}}>
        
             <LoginBg style={styles.background}>
@@ -26,6 +42,7 @@ const SignUp =() => {
                        <View style={styles.inputContainer}>
                         <AntDesign name="user" size={18} color="#68D25F" />    
                         <TextInput
+                        onChangeText={(userName) => setUser(userName)}
                         style={styles.input}
                             placeholder="Email"
                         />
@@ -34,6 +51,7 @@ const SignUp =() => {
                       <View style={styles.inputContainer}>
                       <Feather name="hash" size={18} color="#68D25F" />
                         <TextInput
+                        onChangeText={(userPass) => setPass(userPass)}
                         style={styles.input}
                             placeholder="Password"
                         />
@@ -41,6 +59,7 @@ const SignUp =() => {
                       <View style={styles.inputContainer}>
                       <Ionicons name="person-outline" size={18} color="#68D25F" /> 
                         <TextInput
+                        onChangeText={(Name) => setName(Name)}
                         style={styles.input}
                             placeholder="Name"
                         />
@@ -48,6 +67,7 @@ const SignUp =() => {
                       <View style={styles.inputContainer}>
                         <AntDesign name="mobile1" size={18} color="#68D25F" /> 
                         <TextInput
+                        onChangeText={(phone) => setPhone(phone)}
                         style={styles.input}
                             placeholder="Phone"
                         />
@@ -62,6 +82,7 @@ const SignUp =() => {
 
 
                         <Button
+                            onPress={handleSignup}
                             title="Sign Up"
                             color="#68D25F"
                         />
