@@ -2,29 +2,32 @@
 import React , {useState , useEffect} from 'react';
 import {View , Text , Image , TouchableOpacity} from 'react-native'
 import Home from './home/home';
-
+import * as SecureStore from 'expo-secure-store';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
 
 const Landing = ({navigation}) => {
-  
+
   const Drawer = createDrawerNavigator();
   const [mData, setMdata] = useState({})
-  const getData = () => {
-    AsyncStorage.getItem('mid').then( mid => {
-      fetch('http://192.168.0.88:8000/api/members?mid='+mid)
+  const getData = async () => {
+    let token = await SecureStore.getItemAsync('token')
+    let mid = await SecureStore.getItemAsync('mid')
+      const url = 'http://192.168.0.88:8000/api/members?mid='+mid+"&token="+token
+      console.log(url)
+      await fetch(url)
       .then(response => response.json())
       .then(json => {
         
           setMdata(json[0])
       })
-    })
+
   }
-  useEffect(() => getData() , [])
+  useEffect(  () =>  {getData()} , [])
   console.log(String(mData.pic).length)
   const CustomDrawer = props => {
 
@@ -58,7 +61,12 @@ const Landing = ({navigation}) => {
         </DrawerContentScrollView>
         <TouchableOpacity
     
-          onPress={() => {AsyncStorage.clear(); props.navigation.replace('Auth')}}
+          onPress={() =>  {
+            SecureStore.deleteItemAsync('mid');
+            SecureStore.deleteItemAsync('token');
+            props.navigation.navigate('Auth')
+             
+            }}
           style={{
             position: 'absolute',
             right: 0,
@@ -68,7 +76,7 @@ const Landing = ({navigation}) => {
             padding: 20,
           }}
         >
-          <Text>Log Out</Text>
+          <Text>Logout</Text>
         </TouchableOpacity>
       </View>
     );
@@ -88,7 +96,7 @@ const Landing = ({navigation}) => {
             }}
               drawerContent={props => <CustomDrawer {...props} />}
               initialRouteName="Home">
-              <Drawer.Screen  name="Home" component={HomeScreen}/>
+              <Drawer.Screen  name="Home" component={Home}/>
              
 
             </Drawer.Navigator>

@@ -1,11 +1,16 @@
 {
   "expo": {
-    "name": "restu",
-    "slug": "restu",
-    "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
-  },
-  "name": "restu"
+   "name": "Restu",
+   "icon": "C:/Users/CHRAJEM/restu/restu.png",
+   "version": "1.0.0",
+   "slug": "restu",
+   "ios": {
+     "bundleIdentifier": "com.orderaid.restu",
+     "buildNumber": "1.0.0"
+   },
+   "android": {
+     "package": "com.orderaid.restu",
+     "versionCode": 1
+   }
+  }
 }

@@ -3,6 +3,7 @@ import React , {useState , useEffect} from 'react';
 import {View, TouchableOpacity, Text  , StyleSheet ,  FlatList, Dimensions } from 'react-native'
 import { TextInput , Button, BottomNavigation } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
+import * as SecureStore from 'expo-secure-store';
 
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const Admin = ({navigation}) => {
@@ -15,9 +16,13 @@ const Admin = ({navigation}) => {
         setSearchMethod(method)
         setDisabled({button : button , disabled : !disabled})
     }
-    const getData = ( keyword) => {
+    const getData = async ( keyword) => {
+            let token = await SecureStore.getItemAsync('token')
+            let mid = await SecureStore.getItemAsync('mid')
+
+
             if (keyword.length > 2 ) {
-            const url = "http://192.168.0.88:8000/api/resturants?method=" + searchMethod + "&keyword="+keyword
+            const url = "http://192.168.0.88:8000/api/resturants?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
             setLoading(true)
             fetch(url)
             .then(response => response.json())
@@ -64,6 +69,7 @@ const Admin = ({navigation}) => {
     return (
         <View style={styles.container}>
             <Text style={styles.panelText}>ADMIN PANEL</Text>
+            <TouchableOpacity style={{padding:5}}onPress={() => {SecureStore.deleteItemAsync('token');SecureStore.deleteItemAsync('mid'); navigation.replace('Auth')}}><Text style={{fontWeight:'bold' , color:'white'}}>Logout</Text></TouchableOpacity>
             <View style={styles.searchView}>
                 <TextInput onChangeText={(keyword) => {getData(keyword)}} underlineColor="green" style={styles.searchField} placeholder='Search resturants'></TextInput>
                 <View style={styles.searchOptions}>
@@ -76,7 +82,7 @@ const Admin = ({navigation}) => {
                 {loading ? <Text>loading...</Text> : <FlatList
                     data={resturant}
                     renderItem={RenderRestu}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={item => item.id.toString()}
                     />}
             </View>
             <View style={styles.sendButtons}>

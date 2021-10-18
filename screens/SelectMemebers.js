@@ -3,6 +3,7 @@ import React , {useState , useEffect} from 'react';
 import {View, TouchableOpacity, Text  , StyleSheet ,  FlatList, Dimensions } from 'react-native'
 import { TextInput , Button, BottomNavigation } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
+import * as SecureStore from 'expo-secure-store';
 
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const SelectMemebers = ({route , navigation}) => {
@@ -16,7 +17,9 @@ const SelectMemebers = ({route , navigation}) => {
         setSearchMethod(method)
         setDisabled(button)
     }
-    const sendResturants = () => {
+    const sendResturants = async () => {
+        let token = await SecureStore.getItemAsync('token')
+        let mid = await SecureStore.getItemAsync('mid')
         const data = []
         members.map((member) => {
             if(member.isSelected) {
@@ -25,12 +28,13 @@ const SelectMemebers = ({route , navigation}) => {
             }
             
         })
+        const dataObg = {'mid' : mid , 'token' : token ,'data' : data }
         fetch('http://192.168.0.88:8000/api/toreview', {
             method: 'POST', 
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(dataObg),
           })
           .then(response => response.json())
           .then(data => {
@@ -43,9 +47,10 @@ const SelectMemebers = ({route , navigation}) => {
           });
 
     }
-    const getData = (keyword) => {
-           
-            const url = "http://192.168.0.88:8000/api/members?method=" + searchMethod + "&keyword="+keyword
+    const getData = async (keyword) => {
+            let token = await SecureStore.getItemAsync('token')
+            let mid = await SecureStore.getItemAsync('mid')
+            const url = "http://192.168.0.88:8000/api/members?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
             if (keyword.length > 2 ) {
             setLoading(true)
             fetch(url)
@@ -75,7 +80,13 @@ const SelectMemebers = ({route , navigation}) => {
     }
     return (
         <View style={styles.container}>
+            <View style={{flexDirection:'column', width:'100%' , justifyContent : 'space-around' , alignItems :'center' }}>
             <Text style={styles.panelText}>ADMIN PANEL</Text>
+            <TouchableOpacity style={{padding:5}}onPress={() => {SecureStore.deleteItemAsync('token');SecureStore.deleteItemAsync('mid'); navigation.replace('Auth')}}><Text style={{fontWeight:'bold' , color:'white'}}>Logout</Text></TouchableOpacity>
+
+            </View>
+            
+            
             <View style={styles.searchView}>
                 <TextInput onChangeText={(keyword) => {getData( keyword)}} underlineColor="green" style={styles.searchField} placeholder='Search Members'></TextInput>
                 <View style={styles.searchOptions}>

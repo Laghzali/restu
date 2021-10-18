@@ -4,6 +4,8 @@ import Splash from './screens/splash/splash'
 import SignUp from './screens/signup/signup'
 import Login from './screens/login/login'
 import RestuView from './screens/home/restuview'
+import Home from './screens/home/home'
+
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Landing from './screens/landing'
@@ -31,7 +33,7 @@ const Auth = ({navigation}) => {
 
 
 export default function App() {
-
+ const AdminScreen = props => {return (<Admin {...props}/>)}
   return ( 
     
     <NavigationContainer>
@@ -69,6 +71,7 @@ export default function App() {
           // Hiding header for Navigation Drawer
           options={{headerShown: false}}
         />
+
         <Stack.Screen 
           name="RestuView"
           component={RestuView}

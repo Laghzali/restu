@@ -6,9 +6,9 @@ import { Feather } from '@expo/vector-icons';
 import React, { useState , useCallback, useEffect } from "react";
 import { StyleSheet,RefreshControl ,ImageBackground , ScrollView, Dimensions, TouchableOpacity ,FlatList,Text, View } from 'react-native';
 import Header from '../header'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 const windowHeight = Dimensions.get('window').height;
-AsyncStorage.getItem('count').then( count => console.log(count))
+
   const StarRender = ({many}) => {
           let array = []
           let max = 5
@@ -65,26 +65,24 @@ AsyncStorage.getItem('count').then( count => console.log(count))
     )}
   
   
-const Home = props => {
-
+const Home = ({navigation}) => {
   const [refreshing, setRefreshing] = useState(false);
   const [refreshData , setRefreshData] = useState(true)
   const [data , setData] = useState({})
   const [count , setCount] = useState(0);
+  const [active, setActive] = useState({ elm0 : true,elm1 : false});
   const refreshFlatList = () => {
     setRefreshData(!refreshData)
   }
-  const getData = (grabReviewed) => {
-    
-    AsyncStorage.getItem('count').then( localcount => {
-      console.log('localcount => ' + localcount) })
-    AsyncStorage.getItem('mid').then(mid => { 
-      console.log('fetching')
-      fetch(`http://192.168.0.88:8000/api/retrive/toreview?reviewed=${grabReviewed}&mid=` + mid)
+  const getData = async (grabReviewed) => {
+      let token = await SecureStore.getItemAsync('token')
+      setRefreshing(true)
+      await  SecureStore.getItemAsync('mid').then(mid => { 
+      fetch(`http://192.168.0.88:8000/api/retrive/toreview?reviewed=${grabReviewed}&token=${token}&mid=` + mid)
       .then(response => response.json())
       .then(json => {
         setData(json)
-        setCount(json.length)
+        grabReviewed == 0 ? setCount(json.length) : ''
         setRefreshing(false)
       }).catch(e => console.log(e))
   
@@ -97,11 +95,9 @@ const Home = props => {
       getData(0)
       }, [refreshing]);
 
+
 useEffect(  () => { onRefresh() }, [] )    
-  const [active, setActive] = useState({
-    elm0 : true,
-    elm1 : false
-  });
+
   const onPressActive = (elm) => {
 
         if(elm == 0) {
@@ -119,7 +115,7 @@ useEffect(  () => { onRefresh() }, [] )
     const renderItem = ({ item }) => {
         return (<Item
            id={item.rid}
-           navigation={props.navigation}
+           navigation={navigation}
            rid={item.rid} stars={item.stars} 
            phone={item.phone} 
            image={item.pic} 
@@ -128,7 +124,7 @@ useEffect(  () => { onRefresh() }, [] )
       }
 
    return <View style={styles.container}>
-            <Header navigation={props.navigation} count={count}/>
+            <Header navigation={navigation} count={count}/>
             <View style={styles.body}>
                 <View style={styles.bodyNav}>
                   <TouchableOpacity  onPress={() => onPressActive(0)} style={{ 
@@ -150,7 +146,7 @@ useEffect(  () => { onRefresh() }, [] )
                     extraData={refreshFlatList}
                     data={data}
                     renderItem={renderItem}
-                    keyExtractor={(item, index) => {Math.floor(Math.random() * index+1)}}
+                    keyExtractor={item => item.rid.toString()}
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 /> : <ScrollView
                 contentContainerStyle={styles.scrollView}

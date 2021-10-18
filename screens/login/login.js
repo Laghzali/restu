@@ -4,7 +4,7 @@ import { StyleSheet,Text ,  TextInput, Button, View } from 'react-native';
 import LoginBg from './loginBg';
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 import {
     useFonts,
@@ -12,10 +12,13 @@ import {
     Roboto_100Thin
   } from '@expo-google-fonts/inter';
 
+  async function secureStore(key , value) {
+    await SecureStore.setItemAsync(key, value.toString());
+  }
+
 const Login =({navigation}) => {
     const [userEmail, setUserEmail] = useState('');
     const [userPassword, setUserPass] = useState('');
-    const [logged , setLogged] = useState(false)
     const getLogin =  () => {
     
          fetch('http://192.168.0.88:8000/api/login', {
@@ -28,14 +31,16 @@ const Login =({navigation}) => {
           .then(response => response.json())
           .then(data => {
               if(data.status == 'admin') {
-                AsyncStorage.setItem('mid','admin');
-                //initial count for push notifications check app.js line 142
-                AsyncStorage.setItem('count' , 0)
+                secureStore('mid', data.mid);
+                secureStore('isAdmin', 1);
+                secureStore('token', data.token);
                 navigation.replace('Admin' , {mid : data.mid});
               }
               if(data.status==200) {
-                AsyncStorage.setItem('count' , '0')
-                AsyncStorage.setItem('mid', data.mid.toString());
+                secureStore('mid', data.mid.toString());
+                secureStore('isAdmin', 0);
+                secureStore('token', data.token);
+                alert(data.token)
                 navigation.replace('Landing' , {mid : data.mid});
               }
               if(data.status == 500) {

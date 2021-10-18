@@ -4,7 +4,7 @@ import { Entypo } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import * as SecureStore from 'expo-secure-store';
 const Header = ({count,  navigation}) => {
    
     const [newCount , setCount] = useState(count)
@@ -13,7 +13,7 @@ const Header = ({count,  navigation}) => {
 
     }
     useEffect( () =>{
-        AsyncStorage.getItem('count').then(count => setCount(count))
+        SecureStore.getItemAsync('mid').then(count => setCount(count))
     }, [navigation])
 
     return (

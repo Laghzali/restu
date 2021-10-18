@@ -11,9 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 import {Platform} from 'react-native';
 import {Overlay } from 'react-native-elements';
 import { IconButton } from 'react-native-paper';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-
+import * as SecureStore from 'expo-secure-store';
 
 const RestuView = ({route, navigation}) => {
 
@@ -121,17 +119,18 @@ const RestuView = ({route, navigation}) => {
     
 
     let uploadImage = async () => {
-        
+        let token = await SecureStore.getItemAsync('token')
         //Check if any file is selected or not
         setPostButtonDisabled(true)
         if (file.uri != null && stars > 0 && note.length > 0) {
             
             setLoading(true)
           //If file selected then create FormData
-          AsyncStorage.getItem('mid').then( async (mid) => { 
+          SecureStore.getItemAsync('mid').then( async (mid) => { 
           const data = new FormData();
           data.append('note', note);
           data.append('mid', mid);
+          data.append('token', token);
           data.append('rid', route.params.rid);
           data.append('pic', { name : file.name , uri : Platform.OS === "android" ? file.uri : file.uri.replace("file://", "") , type : file.type});
           data.append('rate', stars);
@@ -143,17 +142,17 @@ const RestuView = ({route, navigation}) => {
               body: data,
               
             }
-          ).catch(e => console.log(e));
+          ).catch(e => alert('error please try again'));
        
           let responseJson = await res.json();
       
           if (responseJson.status == 200) {
             //set rid to reviewed
-            AsyncStorage.getItem('mid').then( mid=> {
-            fetch("http://192.168.0.88:8000/api/reviewd?rid="+route.params.rid+"&mid="+mid).catch(e => console.log(e))
+            SecureStore.getItemAsync('mid').then( mid=> {
+            fetch("http://192.168.0.88:8000/api/reviewd?rid="+route.params.rid+"&token="+token+"&mid="+mid).catch(e => console.log(e))
             })
             //fetch new reviews
-            fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid)
+            fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid+"&token="+token)
                 .then(response => response.json())
                 .then(json => {
                 setData(json);

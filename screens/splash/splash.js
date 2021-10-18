@@ -1,7 +1,6 @@
 import React ,  {useEffect, useState} from 'react';
 import { ImageBackground , View , Text , StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import * as SecureStore from 'expo-secure-store';
 
 
 const Splash = ({navigation}) => {
@@ -9,16 +8,21 @@ const Splash = ({navigation}) => {
    const [animating, setAnimating] = useState(true);
 
    useEffect(() => {
-     setTimeout(() => {
+     setTimeout( async () => {
        setAnimating(false);
        //Check if user_id is set or not
        //If not then send for Authentication
        //else send to Home Screen
-
-       AsyncStorage.getItem('mid').then((value) =>
-        { if(value === 'admin') {navigation.replace('Admin')} else {navigation.replace(
-           value === null ? 'Auth' : 'Landing'
-         )}},
+      let isAdmin = await SecureStore.getItemAsync('isAdmin')
+       SecureStore.getItemAsync('mid').then((value) =>
+        { 
+          if(isAdmin === '1') {
+            navigation.replace('Admin')
+          } else {
+            navigation.replace(value === null ? 'Auth' : 'Landing'
+         )}
+        
+        },
        );
      }, 1000);
    }, []);

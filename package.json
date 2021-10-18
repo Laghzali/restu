@@ -53,7 +53,8 @@
     "redux": "^4.1.1",
     "rn-fetch-blob": "^0.12.0",
     "expo-background-fetch": "~9.2.2",
-    "expo-task-manager": "~9.2.2"
+    "expo-task-manager": "~9.2.2",
+    "expo-secure-store": "~10.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"
