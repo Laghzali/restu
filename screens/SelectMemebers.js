@@ -34,12 +34,14 @@ const SelectMemebers = ({route , navigation}) => {
           })
           .then(response => response.json())
           .then(data => {
-            console.log('Success:', data);
+            if(data.status== 200){
+                alert('Data sent succesfully')
+            }
           })
           .catch((error) => {
-            console.error('Error:', error);
+            console.log(error);
           });
-          console.error('??');
+
     }
     const getData = (keyword) => {
            

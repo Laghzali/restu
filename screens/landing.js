@@ -1,9 +1,9 @@
 
 import React , {useState , useEffect} from 'react';
 import {View , Text , Image , TouchableOpacity} from 'react-native'
-import Home from './home/home'
+import Home from './home/home';
+
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import Header from './header'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   DrawerContentScrollView,
@@ -11,6 +11,7 @@ import {
 } from '@react-navigation/drawer';
 
 const Landing = ({navigation}) => {
+  
   const Drawer = createDrawerNavigator();
   const [mData, setMdata] = useState({})
   const getData = () => {
@@ -28,7 +29,9 @@ const Landing = ({navigation}) => {
   const CustomDrawer = props => {
 
     return (
+      
       <View style={{ flex: 1 }}>
+        
         <DrawerContentScrollView {...props}>
           <View
             style={{
@@ -41,7 +44,7 @@ const Landing = ({navigation}) => {
             }}
           >
             <View>
-              <Text>{mData.name}</Text>
+              <Text style={{fontWeight:'bold'}}>{mData.name}</Text>
               <Text>{mData.user}</Text>
             </View>
             <Image
@@ -71,14 +74,14 @@ const Landing = ({navigation}) => {
     );
   };
   const HomeScreen = (props) => {return <Home  {...props}/>}
-
+  
     return (
        
             <Drawer.Navigator screenOptions={{
 
               headerShown: false,
               headerStyle: {
-                backgroundColor: 'transparent',
+                backgroundColor: '#272121',
                 elevation: 0,
                 shadowOpacity: 0,
               }
@@ -86,6 +89,7 @@ const Landing = ({navigation}) => {
               drawerContent={props => <CustomDrawer {...props} />}
               initialRouteName="Home">
               <Drawer.Screen  name="Home" component={HomeScreen}/>
+             
 
             </Drawer.Navigator>
     )

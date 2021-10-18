@@ -11,11 +11,9 @@ import * as ImagePicker from 'expo-image-picker';
 import {Platform} from 'react-native';
 import {Overlay } from 'react-native-elements';
 import { IconButton } from 'react-native-paper';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-
-
-const mid = 1;
 
 const RestuView = ({route, navigation}) => {
 
@@ -26,6 +24,7 @@ const RestuView = ({route, navigation}) => {
 
 
     const RenderReview = ({data}) => {
+
         return data.map((data , index) => {
             return (
                 <View key={'key'+index} style={{flexDirection: 'row', marginTop:15, alignItems:'center'}}>
@@ -75,7 +74,7 @@ const RestuView = ({route, navigation}) => {
     useEffect(() => {
         (async () => {
           if (Platform.OS !== 'web') {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync().catch(e => console.log(e));
             if (status !== 'granted') {
               alert('Sorry, we need camera roll permissions to make this work!');
             }
@@ -118,22 +117,25 @@ const RestuView = ({route, navigation}) => {
         .then(json => {
           setData(json);
           setLoading(false)
-        });} , [])
+        }).catch(e => console.log(e)) } , [])
     
 
     let uploadImage = async () => {
+        
         //Check if any file is selected or not
         setPostButtonDisabled(true)
-        if (file != null && stars > 0 && note.length > 0) {
+        if (file.uri != null && stars > 0 && note.length > 0) {
             
             setLoading(true)
           //If file selected then create FormData
+          AsyncStorage.getItem('mid').then( async (mid) => { 
           const data = new FormData();
           data.append('note', note);
           data.append('mid', mid);
           data.append('rid', route.params.rid);
           data.append('pic', { name : file.name , uri : Platform.OS === "android" ? file.uri : file.uri.replace("file://", "") , type : file.type});
           data.append('rate', stars);
+        
           let res = await fetch(
             'http://192.168.0.88:8000/api/review/new',
             {
@@ -141,12 +143,16 @@ const RestuView = ({route, navigation}) => {
               body: data,
               
             }
-          );
-
+          ).catch(e => console.log(e));
+       
           let responseJson = await res.json();
-          
+      
           if (responseJson.status == 200) {
-            fetch("http://192.168.0.88:8000/api/reviewd?rid="+route.params.rid+"&mid="+mid)
+            //set rid to reviewed
+            AsyncStorage.getItem('mid').then( mid=> {
+            fetch("http://192.168.0.88:8000/api/reviewd?rid="+route.params.rid+"&mid="+mid).catch(e => console.log(e))
+            })
+            //fetch new reviews
             fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid)
                 .then(response => response.json())
                 .then(json => {
@@ -155,12 +161,14 @@ const RestuView = ({route, navigation}) => {
                 setLoading(false)
                 alert('Review succesfully sent!')
                 setPostButtonDisabled(false)
-        });
-          }
+        }).catch(e => console.log(e));
+          } })
         } else {
           //if no file selected the show alert
           alert('Please check your review');
+          setPostButtonDisabled(false)
         }
+        
     };
 
 
@@ -186,7 +194,7 @@ const RestuView = ({route, navigation}) => {
                 resizeMode = 'cover'
                 style={styles.itemImage}
                 source={{
-                uri: route.params.image.length < 1 ? 'https://icons.iconarchive.com/icons/graphicloads/colorful-long-shadow/256/Restaurant-icon.png' : route.params.image
+                uri: route.params.image ? route.params.image : 'https://icons.iconarchive.com/icons/graphicloads/colorful-long-shadow/256/Restaurant-icon.png'
                 }}
             >
             </ImageBackground > 

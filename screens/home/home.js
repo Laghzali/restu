@@ -36,7 +36,7 @@ AsyncStorage.getItem('count').then( count => console.log(count))
                 resizeMode = 'cover'
                 style={styles.itemImage}
                 source={{
-                uri: image.length < 1 ? 'https://icons.iconarchive.com/icons/graphicloads/colorful-long-shadow/256/Restaurant-icon.png' : decodeURI(image),
+                uri: image ? image : 'https://icons.iconarchive.com/icons/graphicloads/colorful-long-shadow/256/Restaurant-icon.png',
                 }}
             >
               <LinearGradient 
@@ -74,45 +74,46 @@ const Home = props => {
   const refreshFlatList = () => {
     setRefreshData(!refreshData)
   }
-  const getData = () => {
+  const getData = (grabReviewed) => {
     
+    AsyncStorage.getItem('count').then( localcount => {
+      console.log('localcount => ' + localcount) })
     AsyncStorage.getItem('mid').then(mid => { 
       console.log('fetching')
-      fetch("http://192.168.0.88:8000/api/retrive/toreview?mid=" + mid)
+      fetch(`http://192.168.0.88:8000/api/retrive/toreview?reviewed=${grabReviewed}&mid=` + mid)
       .then(response => response.json())
       .then(json => {
         setData(json)
         setCount(json.length)
         setRefreshing(false)
-      })
+      }).catch(e => console.log(e))
   
-    } )
-
+    } ).catch(e => console.log(e))
   }
-
-  useEffect(  () =>  
-{
-
-  onRefresh() 
-
-}, [] ) 
 
  const onRefresh = useCallback(async () => {
       setRefreshing(true);
-      getData()
+      setActive({elm0 : true , elm1 : false})
+      getData(0)
       }, [refreshing]);
+
+useEffect(  () => { onRefresh() }, [] )    
   const [active, setActive] = useState({
     elm0 : true,
     elm1 : false
   });
-  const onPressActive = () => {
-    if (active.elm0 == true) {
-      setActive({elm0 : false , elm1 : true})
-    }
-    else {
-      setActive({elm0 : true , elm1 : false})
-    }
+  const onPressActive = (elm) => {
 
+        if(elm == 0) {
+          setActive({elm0 : true , elm1 : false})
+
+          getData(0)
+          
+        } else {
+          setActive({elm0 : false , elm1 : true})
+          getData(1)
+        }
+    
   }
 
     const renderItem = ({ item }) => {
@@ -130,13 +131,13 @@ const Home = props => {
             <Header navigation={props.navigation} count={count}/>
             <View style={styles.body}>
                 <View style={styles.bodyNav}>
-                  <TouchableOpacity  onPress={onPressActive} style={{ 
+                  <TouchableOpacity  onPress={() => onPressActive(0)} style={{ 
                     borderColor : "#CBCBCB",
                     borderRadius : 4 ,  
                     borderBottomWidth : active.elm0 ? 3 : 0}}>
                       <Text style={styles.dashboard}>Review list</Text>
                   </TouchableOpacity> 
-                  <TouchableOpacity onPress={onPressActive} style={{ 
+                  <TouchableOpacity onPress={() => onPressActive(1)} style={{ 
                     borderColor : "#CBCBCB", 
                     borderRadius : 4 ,  
                     borderBottomWidth : active.elm1 ? 3 : 0}}>

@@ -23,7 +23,7 @@ const SignUp =({navigation}) => {
 
 const handleSignup = async () => {
     if(user && pass && name && phone ) {
-    let res = await fetch('http://192.168.0.88:8000/api/register'+`?user=${user}&pass=${pass}&name=${name}&phone=${phone}`)
+    let res = await fetch('http://192.168.0.88:8000/api/register'+`?user=${user}&pass=${pass}&name=${name}&phone=${phone}`).catch(e => console.log(e))
     let resJson = await res.json()
     if(resJson.status == 200) {
         alert('you have been successfuly registred')

@@ -24,17 +24,20 @@ const Admin = ({navigation}) => {
             .then(json => {
             setResturants(json);
             setLoading(false)
-            }) }
+            }).catch(e => console.log(e)) }
     }
+    
     const sendToAll = () => {
 
     }
+
     const sendResturantsToMemebers = () => {
         const toSend = []
         resturant.map((item) => {
             if(item.isSelected) {
-                     console.log(item)
+
                     toSend.push(item.id)
+
             }
         })
         navigation.navigate('SelectMembers', {selectedResturants : toSend})

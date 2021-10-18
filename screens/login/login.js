@@ -44,7 +44,7 @@ const Login =({navigation}) => {
           })
           .catch((error) => {
             console.error('Error:', error);
-            alert('erro')
+            alert('error')
 
           });
 

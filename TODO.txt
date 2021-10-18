@@ -14,7 +14,15 @@
 ✅ //fix Currently we support only numbers in height prop https://github.com/callstack/react-native-paper/issues/2159
 ✅ //fix fix this contuniously fetching in landing
 ❌//logout button in admin
-✅//PUSH NOTIFICATION
+❌//PUSH NOTIFICATION (BROKEN need to redo)
 ✅ //add refresh button in home
 ✅//FIX COUNT
 ✅//REDUCE DATAFETCHING TIMES
+✅//REVIEWD
+✅//RATING
+❌//FIX COUNT ON REVIEWD screen
+❌//PLEASE IMPLEMENT REAL AUTHENTIFICATION AND GET RID OF ASYNC STORAGE MADDNESS !important
+❌//SHOW CORRECT ICON ON REVIEWD ITEM INSTEAD OF IMAGE (OR ON TOP OF IMAGE)
+❌//PRESS ON BELL REDIRECT YOU TO REVIEWLIST
+❌//PREVENT SIDEBAR FROM RERENDERING !LOW PRIORITY
+❌//SHOW ACTUAL RATING RESTUVIEW
