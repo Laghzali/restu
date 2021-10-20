@@ -21,7 +21,7 @@ const Login =({navigation}) => {
     const [userPassword, setUserPass] = useState('');
     const getLogin =  () => {
     
-         fetch('http://192.168.0.88:8000/api/login', {
+         fetch('http://restuapi.orderaid.com.au/api/login', {
             method: 'POST', 
             headers: {
               'Content-Type': 'application/json',

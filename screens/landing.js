@@ -17,7 +17,7 @@ const Landing = ({navigation}) => {
   const getData = async () => {
     let token = await SecureStore.getItemAsync('token')
     let mid = await SecureStore.getItemAsync('mid')
-      const url = 'http://192.168.0.88:8000/api/members?mid='+mid+"&token="+token
+      const url = 'http://restuapi.orderaid.com.au/api/members?mid='+mid+"&token="+token
       console.log(url)
       await fetch(url)
       .then(response => response.json())
@@ -52,7 +52,7 @@ const Landing = ({navigation}) => {
             </View>
             <Image
               source={{
-                uri: 'http://192.168.0.88:8000/storage/user.png',
+                uri: 'http://restuapi.orderaid.com.au/storage/user.png',
               }}
               style={{ width: 60, height: 60, borderRadius: 30 }}
             />

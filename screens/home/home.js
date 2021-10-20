@@ -78,7 +78,7 @@ const Home = ({navigation}) => {
       let token = await SecureStore.getItemAsync('token')
       setRefreshing(true)
       await  SecureStore.getItemAsync('mid').then(mid => { 
-      fetch(`http://192.168.0.88:8000/api/retrive/toreview?reviewed=${grabReviewed}&token=${token}&mid=` + mid)
+      fetch(`http://restuapi.orderaid.com.au/api/retrive/toreview?reviewed=${grabReviewed}&token=${token}&mid=` + mid)
       .then(response => response.json())
       .then(json => {
         setData(json)

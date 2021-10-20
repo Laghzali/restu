@@ -22,7 +22,7 @@ const Admin = ({navigation}) => {
 
 
             if (keyword.length > 2 ) {
-            const url = "http://192.168.0.88:8000/api/resturants?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
+            const url = "http://restuapi.orderaid.com.au/api/resturants?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
             setLoading(true)
             fetch(url)
             .then(response => response.json())

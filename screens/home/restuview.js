@@ -27,7 +27,7 @@ const RestuView = ({route, navigation}) => {
             return (
                 <View key={'key'+index} style={{flexDirection: 'row', marginTop:15, alignItems:'center'}}>
                 <Image style={{borderColor:'rgba(104, 210, 95,0.5)',borderWidth:1,width:35,height:35,borderRadius:50}}source={{
-                        uri:'http://192.168.0.88:8000/storage/user.png',
+                        uri:'http://restuapi.orderaid.com.au/storage/user.png',
                         }}></Image>
                 <TouchableOpacity style={{width:'88%'}} onPress={() => toggle(data.id)}>
                     <Text style={{padding:5,
@@ -110,7 +110,7 @@ const RestuView = ({route, navigation}) => {
     const [loading , setLoading] = useState(true)
     const [postButtonDisabled , setPostButtonDisabled] = useState(false)
     useEffect( () => {
-      fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid)
+      fetch("http://restuapi.orderaid.com.au/api/reviews?rid="+route.params.rid)
         .then(response => response.json())
         .then(json => {
           setData(json);
@@ -136,7 +136,7 @@ const RestuView = ({route, navigation}) => {
           data.append('rate', stars);
         
           let res = await fetch(
-            'http://192.168.0.88:8000/api/review/new',
+            'http://restuapi.orderaid.com.au/api/review/new',
             {
               method: 'post',
               body: data,
@@ -149,10 +149,10 @@ const RestuView = ({route, navigation}) => {
           if (responseJson.status == 200) {
             //set rid to reviewed
             SecureStore.getItemAsync('mid').then( mid=> {
-            fetch("http://192.168.0.88:8000/api/reviewd?rid="+route.params.rid+"&token="+token+"&mid="+mid).catch(e => console.log(e))
+            fetch("http://restuapi.orderaid.com.au/api/reviewd?rid="+route.params.rid+"&token="+token+"&mid="+mid).catch(e => console.log(e))
             })
             //fetch new reviews
-            fetch("http://192.168.0.88:8000/api/reviews?rid="+route.params.rid+"&token="+token)
+            fetch("http://restuapi.orderaid.com.au/api/reviews?rid="+route.params.rid+"&token="+token)
                 .then(response => response.json())
                 .then(json => {
                 setData(json);
