@@ -82,7 +82,7 @@ const SelectMemebers = ({route , navigation}) => {
         <View style={styles.container}>
             <View style={{flexDirection:'column', width:'100%' , justifyContent : 'space-around' , alignItems :'center' }}>
             <Text style={styles.panelText}>ADMIN PANEL</Text>
-            <TouchableOpacity style={{padding:5}}onPress={() => {SecureStore.deleteItemAsync('token');SecureStore.deleteItemAsync('mid'); navigation.replace('Auth')}}><Text style={{fontWeight:'bold' , color:'white'}}>Logout</Text></TouchableOpacity>
+            <TouchableOpacity style={{padding:5}}onPress={() => {SecureStore.deleteItemAsync('isAdmin');SecureStore.deleteItemAsync('token');SecureStore.deleteItemAsync('mid'); navigation.replace('Auth')}}><Text style={{fontWeight:'bold' , color:'white'}}>Logout</Text></TouchableOpacity>
 
             </View>
             

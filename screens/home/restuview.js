@@ -21,7 +21,7 @@ const RestuView = ({route, navigation}) => {
     }
 
 
-    const RenderReview = ({data}) => {
+    const RenderReview = ({ data}) => {
 
         return data.map((data , index) => {
             return (
@@ -37,9 +37,13 @@ const RestuView = ({route, navigation}) => {
                         borderWidth:1,borderRadius:3,marginLeft:5 , borderColor:'rgba(104, 210, 95, 0.22)'}}>{data.note}
                     </Text>
                 </TouchableOpacity>
-                <Overlay  onBackdropPress={toggle}  isVisible={visible.id == data.id ? visible.visible : false}>
-                
-                 <Image  style={{width: Dimensions .get('window').width - 50 ,height:320}} source={{uri : data.pic , scale :1}}></Image>
+                <Overlay transparent style={{backgroundColor:'transparent'}} onBackdropPress={toggle}  isVisible={visible.id == data.id ? visible.visible : false}>
+
+                 <ImageBackground  style={{width: Dimensions .get('window').width - 40 ,height:320}} source={{uri : data.pic , scale :1}}>
+                    <View style={{flexDirection:'row', padding:5}}>
+                        <OverlayStarRender many={data.rate} />
+                    </View>
+                 </ImageBackground>
                 
                 </Overlay>   
                 </View>         
@@ -70,6 +74,17 @@ const RestuView = ({route, navigation}) => {
 
         return array
     }
+    const OverlayStarRender = ({many}) => {
+        let array = []
+        let max = 5
+        for (let x = 0 ;  x<many ; x++) {
+          array.push(<FontAwesome key={x+new Date()} name="star" size={18} color="#68D25F" />)
+        }
+        for(let y = 0 ; y < max-many ; y++) {
+          array.push(<Feather key={y} name="star" size={18} color="#68D25F" />)
+        }
+        return array
+  }
 
     useEffect(() => {
         (async () => {

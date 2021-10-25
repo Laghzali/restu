@@ -71,7 +71,7 @@ const Admin = ({navigation}) => {
     return (
         <View style={styles.container}>
             <Text style={styles.panelText}>ADMIN PANEL</Text>
-            <TouchableOpacity style={{padding:5}}onPress={() => {SecureStore.deleteItemAsync('token');SecureStore.deleteItemAsync('mid'); navigation.replace('Auth')}}><Text style={{fontWeight:'bold' , color:'white'}}>Logout</Text></TouchableOpacity>
+            <TouchableOpacity style={{padding:5}}onPress={() => {SecureStore.deleteItemAsync('isAdmin');SecureStore.deleteItemAsync('token');SecureStore.deleteItemAsync('mid'); navigation.replace('Auth')}}><Text style={{fontWeight:'bold' , color:'white'}}>Logout</Text></TouchableOpacity>
             <View style={styles.searchView}>
                 <TextInput onChangeText={(keyword) => {getData(keyword)}} underlineColor="green" style={styles.searchField} placeholder='Search resturants'></TextInput>
                 <View style={styles.searchOptions}>

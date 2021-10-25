@@ -17,12 +17,15 @@
     "@react-navigation/stack": "^6.0.9",
     "axios": "^0.23.0",
     "expo": "^42.0.4",
+    "expo-background-fetch": "~9.2.2",
     "expo-font": "~9.2.1",
     "expo-image-picker": "~10.2.2",
     "expo-linear-gradient": "~9.2.0",
     "expo-notifications": "~0.12.3",
+    "expo-secure-store": "~10.2.0",
     "expo-splash-screen": "~0.11.2",
     "expo-status-bar": "~1.0.4",
+    "expo-task-manager": "~9.2.2",
     "expo-updates": "~0.8.1",
     "firebase": "8.2.3",
     "formik": "^2.2.9",
@@ -52,9 +55,7 @@
     "react-spinners": "^0.11.0",
     "redux": "^4.1.1",
     "rn-fetch-blob": "^0.12.0",
-    "expo-background-fetch": "~9.2.2",
-    "expo-task-manager": "~9.2.2",
-    "expo-secure-store": "~10.2.0"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"

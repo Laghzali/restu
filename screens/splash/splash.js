@@ -16,10 +16,10 @@ const Splash = ({navigation}) => {
       let isAdmin = await SecureStore.getItemAsync('isAdmin')
        SecureStore.getItemAsync('mid').then((value) =>
         { 
-          if(isAdmin === '1') {
+          if(isAdmin == '1') {
             navigation.replace('Admin')
           } else {
-            navigation.replace(value === null ? 'Auth' : 'Landing'
+            navigation.replace(value == null ? 'Auth' : 'Landing'
          )}
         
         },

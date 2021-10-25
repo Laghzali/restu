@@ -4,6 +4,8 @@ import LoginBg from './loginBg';
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
 import { Ionicons } from '@expo/vector-icons';
+import * as yup from 'yup';
+
 import {
     useFonts,
     Inter_900Black,
@@ -21,6 +23,28 @@ const SignUp =({navigation}) => {
         Inter_900Black
       });
 
+    let schema = yup.object().shape({
+        email: yup.string().email().required("invalid email"),
+        password : yup.string().required('No password provided.') 
+        .min(6, 'Password is too short - should be 6 chars minimum.'),
+        name : yup.string().required("Please enter your name ")
+     });
+const validateSignup = () => {
+            schema
+            .isValid({
+              email: user,
+              password: pass,
+              name : name
+            })
+            .then(function (valid) {
+              if(valid == true) {
+                handleSignup()
+              } else {
+                  pass.length < 6 ? alert("Password is too short - should be 6 chars minimum.") : ''
+                  alert('all fileds are required')
+              }
+            });
+}     
 const handleSignup = async () => {
     if(user && pass && name && phone ) {
     let res = await fetch('https://restuapi.orderaid.com.au/api/register'+`?user=${user}&pass=${pass}&name=${name}&phone=${phone}`).catch(e => console.log(e))
@@ -82,7 +106,7 @@ const handleSignup = async () => {
 
 
                         <Button
-                            onPress={handleSignup}
+                            onPress={validateSignup}
                             title="Sign Up"
                             color="#68D25F"
                         />

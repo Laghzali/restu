@@ -5,6 +5,7 @@ import LoginBg from './loginBg';
 import { AntDesign } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
+import * as yup from 'yup';
 
 import {
     useFonts,
@@ -17,10 +18,28 @@ import {
   }
 
 const Login =({navigation}) => {
+
+    let schema = yup.object().shape({
+      email: yup.string().email().required(),
+      password : yup.string().required()
+    });
+
     const [userEmail, setUserEmail] = useState('');
     const [userPassword, setUserPass] = useState('');
+
+    const validateLogin = () => {
+            schema
+            .isValid({
+              email: userEmail,
+              password: userPassword
+            })
+            .then(function (valid) {
+              if(valid == true) {
+                getLogin()
+              } else {alert("invalid email or password")}
+            });
+    }
     const getLogin =  () => {
-    
          fetch('https://restuapi.orderaid.com.au/api/login', {
             method: 'POST', 
             headers: {
@@ -90,7 +109,7 @@ const Login =({navigation}) => {
                     </View>
 
                     <Button 
-                        onPress={getLogin}
+                        onPress={validateLogin}
                         title="Sign in"
                         color="#68D25F"
                         accessibilityLabel="Learn more about this purple button"

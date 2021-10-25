@@ -62,6 +62,7 @@ const Landing = ({navigation}) => {
         <TouchableOpacity
     
           onPress={() =>  {
+            SecureStore.deleteItemAsync('isAdmin')
             SecureStore.deleteItemAsync('mid');
             SecureStore.deleteItemAsync('token');
             props.navigation.navigate('Auth')
