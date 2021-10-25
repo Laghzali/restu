@@ -17,8 +17,8 @@ const Landing = ({navigation}) => {
   const getData = async () => {
     let token = await SecureStore.getItemAsync('token')
     let mid = await SecureStore.getItemAsync('mid')
-      const url = 'http://restuapi.orderaid.com.au/api/members?mid='+mid+"&token="+token
-      console.log(url)
+      const url = 'https://restuapi.orderaid.com.au/api/members?mid='+mid+"&token="+token
+
       await fetch(url)
       .then(response => response.json())
       .then(json => {
@@ -28,7 +28,7 @@ const Landing = ({navigation}) => {
 
   }
   useEffect(  () =>  {getData()} , [])
-  console.log(String(mData.pic).length)
+
   const CustomDrawer = props => {
 
     return (
@@ -52,7 +52,7 @@ const Landing = ({navigation}) => {
             </View>
             <Image
               source={{
-                uri: 'http://restuapi.orderaid.com.au/storage/user.png',
+                uri: 'https://restuapi.orderaid.com.au/storage/user.png',
               }}
               style={{ width: 60, height: 60, borderRadius: 30 }}
             />

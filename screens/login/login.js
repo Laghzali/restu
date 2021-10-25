@@ -21,7 +21,7 @@ const Login =({navigation}) => {
     const [userPassword, setUserPass] = useState('');
     const getLogin =  () => {
     
-         fetch('http://restuapi.orderaid.com.au/api/login', {
+         fetch('https://restuapi.orderaid.com.au/api/login', {
             method: 'POST', 
             headers: {
               'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ const Login =({navigation}) => {
                 secureStore('mid', data.mid.toString());
                 secureStore('isAdmin', 0);
                 secureStore('token', data.token);
-                alert(data.token)
+
                 navigation.replace('Landing' , {mid : data.mid});
               }
               if(data.status == 500) {

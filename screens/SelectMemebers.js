@@ -29,7 +29,7 @@ const SelectMemebers = ({route , navigation}) => {
             
         })
         const dataObg = {'mid' : mid , 'token' : token ,'data' : data }
-        fetch('http://restuapi.orderaid.com.au/api/toreview', {
+        fetch('https://restuapi.orderaid.com.au/api/toreview', {
             method: 'POST', 
             headers: {
               'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ const SelectMemebers = ({route , navigation}) => {
     const getData = async (keyword) => {
             let token = await SecureStore.getItemAsync('token')
             let mid = await SecureStore.getItemAsync('mid')
-            const url = "http://restuapi.orderaid.com.au/api/members?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
+            const url = "https://restuapi.orderaid.com.au/api/members?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
             if (keyword.length > 2 ) {
             setLoading(true)
             fetch(url)

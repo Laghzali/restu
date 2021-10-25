@@ -1,5 +1,5 @@
 import React, { useState , useRef,  useEffect} from "react";
-import { StyleSheet,Text, findNodeHandle ,KeyboardAvoidingView, Image,SafeAreaView,Dimensions , ScrollView,ImageBackground, View } from 'react-native';
+import { StyleSheet,Text ,KeyboardAvoidingView, Image,SafeAreaView,Dimensions , ScrollView,ImageBackground, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { Entypo } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons'; 
@@ -27,7 +27,7 @@ const RestuView = ({route, navigation}) => {
             return (
                 <View key={'key'+index} style={{flexDirection: 'row', marginTop:15, alignItems:'center'}}>
                 <Image style={{borderColor:'rgba(104, 210, 95,0.5)',borderWidth:1,width:35,height:35,borderRadius:50}}source={{
-                        uri:'http://restuapi.orderaid.com.au/storage/user.png',
+                        uri:'https://restuapi.orderaid.com.au/storage/user.png',
                         }}></Image>
                 <TouchableOpacity style={{width:'88%'}} onPress={() => toggle(data.id)}>
                     <Text style={{padding:5,
@@ -38,7 +38,9 @@ const RestuView = ({route, navigation}) => {
                     </Text>
                 </TouchableOpacity>
                 <Overlay  onBackdropPress={toggle}  isVisible={visible.id == data.id ? visible.visible : false}>
+                
                  <Image  style={{width: Dimensions .get('window').width - 50 ,height:320}} source={{uri : data.pic , scale :1}}></Image>
+                
                 </Overlay>   
                 </View>         
             )})
@@ -110,7 +112,7 @@ const RestuView = ({route, navigation}) => {
     const [loading , setLoading] = useState(true)
     const [postButtonDisabled , setPostButtonDisabled] = useState(false)
     useEffect( () => {
-      fetch("http://restuapi.orderaid.com.au/api/reviews?rid="+route.params.rid)
+      fetch("https://restuapi.orderaid.com.au/api/reviews?rid="+route.params.rid)
         .then(response => response.json())
         .then(json => {
           setData(json);
@@ -122,7 +124,7 @@ const RestuView = ({route, navigation}) => {
         let token = await SecureStore.getItemAsync('token')
         //Check if any file is selected or not
         setPostButtonDisabled(true)
-        if (file.uri != null && stars > 0 && note.length > 0) {
+        if (file.uri != null && stars > 0 && note !=undefined) {
             
             setLoading(true)
           //If file selected then create FormData
@@ -136,7 +138,7 @@ const RestuView = ({route, navigation}) => {
           data.append('rate', stars);
         
           let res = await fetch(
-            'http://restuapi.orderaid.com.au/api/review/new',
+            'https://restuapi.orderaid.com.au/api/review/new',
             {
               method: 'post',
               body: data,
@@ -149,10 +151,10 @@ const RestuView = ({route, navigation}) => {
           if (responseJson.status == 200) {
             //set rid to reviewed
             SecureStore.getItemAsync('mid').then( mid=> {
-            fetch("http://restuapi.orderaid.com.au/api/reviewd?rid="+route.params.rid+"&token="+token+"&mid="+mid).catch(e => console.log(e))
+            fetch("https://restuapi.orderaid.com.au/api/reviewd?rid="+route.params.rid+"&token="+token+"&mid="+mid).catch(e => console.log(e))
             })
             //fetch new reviews
-            fetch("http://restuapi.orderaid.com.au/api/reviews?rid="+route.params.rid+"&token="+token)
+            fetch("https://restuapi.orderaid.com.au/api/reviews?rid="+route.params.rid+"&token="+token)
                 .then(response => response.json())
                 .then(json => {
                 setData(json);

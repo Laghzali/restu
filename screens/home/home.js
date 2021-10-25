@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import React, { useState , useCallback, useEffect } from "react";
 import { StyleSheet,RefreshControl ,ImageBackground , ScrollView, Dimensions, TouchableOpacity ,FlatList,Text, View } from 'react-native';
 import Header from '../header'
+
 import * as SecureStore from 'expo-secure-store';
 const windowHeight = Dimensions.get('window').height;
 
@@ -78,7 +79,9 @@ const Home = ({navigation}) => {
       let token = await SecureStore.getItemAsync('token')
       setRefreshing(true)
       await  SecureStore.getItemAsync('mid').then(mid => { 
-      fetch(`http://restuapi.orderaid.com.au/api/retrive/toreview?reviewed=${grabReviewed}&token=${token}&mid=` + mid)
+        const url =`https://restuapi.orderaid.com.au/api/retrive/toreview?reviewed=${grabReviewed}&token=${token}&mid=` + mid
+        console.log(url)
+      fetch(url)
       .then(response => response.json())
       .then(json => {
         setData(json)

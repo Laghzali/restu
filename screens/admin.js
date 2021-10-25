@@ -22,18 +22,20 @@ const Admin = ({navigation}) => {
 
 
             if (keyword.length > 2 ) {
-            const url = "http://restuapi.orderaid.com.au/api/resturants?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
+            const url = "https://restuapi.orderaid.com.au/api/resturants?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
+            console.log(url)
             setLoading(true)
             fetch(url)
             .then(response => response.json())
             .then(json => {
+
             setResturants(json);
             setLoading(false)
             }).catch(e => console.log(e)) }
     }
     
-    const sendToAll = () => {
-
+    const sendToAll = async () => {
+      
     }
 
     const sendResturantsToMemebers = () => {
@@ -86,7 +88,7 @@ const Admin = ({navigation}) => {
                     />}
             </View>
             <View style={styles.sendButtons}>
-                <TouchableOpacity style={styles.sendButton}><Text>Send to all</Text></TouchableOpacity>
+                <TouchableOpacity onPress={sendToAll} style={styles.sendButton}><Text>Send to all</Text></TouchableOpacity>
                 <TouchableOpacity onPress={sendResturantsToMemebers} style={styles.sendButton}><Text>Select Members</Text></TouchableOpacity>
             </View>
         </View>
