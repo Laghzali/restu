@@ -4,6 +4,7 @@ import {View, TouchableOpacity, Text  , StyleSheet ,  FlatList, Dimensions } fro
 import { TextInput , Button, BottomNavigation } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
+import * as DocumentPicker from 'expo-document-picker';
 
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const Admin = ({navigation}) => {
@@ -36,6 +37,9 @@ const Admin = ({navigation}) => {
     
     const sendToAll = async () => {
       
+    }
+    const uploadExcel = async () => {
+        let result = await DocumentPicker.getDocumentAsync({});
     }
 
     const sendResturantsToMemebers = () => {
@@ -89,6 +93,7 @@ const Admin = ({navigation}) => {
             </View>
             <View style={styles.sendButtons}>
                 <TouchableOpacity onPress={sendToAll} style={styles.sendButton}><Text>Send to all</Text></TouchableOpacity>
+                <TouchableOpacity onPress={uploadExcel} style={styles.sendButton}><Text>Upload</Text></TouchableOpacity>
                 <TouchableOpacity onPress={sendResturantsToMemebers} style={styles.sendButton}><Text>Select Members</Text></TouchableOpacity>
             </View>
         </View>

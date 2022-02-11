@@ -55,7 +55,9 @@
     "react-spinners": "^0.11.0",
     "redux": "^4.1.1",
     "rn-fetch-blob": "^0.12.0",
-    "yup": "^0.32.11"
+    "xlsx": "^0.18.0",
+    "yup": "^0.32.11",
+    "expo-document-picker": "~9.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"
