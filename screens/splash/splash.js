@@ -1,5 +1,5 @@
 import React ,  {useEffect, useState} from 'react';
-import { ImageBackground , View , Text , StyleSheet } from 'react-native';
+import { ImageBackground , View , Text , StyleSheet, Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
 
@@ -13,7 +13,10 @@ const Splash = ({navigation}) => {
        //Check if user_id is set or not
        //If not then send for Authentication
        //else send to Home Screen
-      let isAdmin = await SecureStore.getItemAsync('isAdmin')
+       if(Platform.OS ==  'web') {
+        navigation.replace('Admin')
+       } else {
+       let isAdmin = await SecureStore.getItemAsync('isAdmin')
        SecureStore.getItemAsync('mid').then((value) =>
         { 
           if(isAdmin === '1') {
@@ -23,7 +26,7 @@ const Splash = ({navigation}) => {
          )}
         
         },
-       );
+       ); }
      }, 1000);
    }, []);
   return(

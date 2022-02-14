@@ -1,6 +1,6 @@
 
 import React , {useState , useEffect} from 'react';
-import {View, TouchableOpacity, Text  , StyleSheet ,  FlatList, Dimensions } from 'react-native'
+import {View, TouchableOpacity, Text  ,Platform , StyleSheet ,  FlatList, Dimensions } from 'react-native'
 import { TextInput , Button, BottomNavigation } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
@@ -18,8 +18,16 @@ const SelectMemebers = ({route , navigation}) => {
         setDisabled(button)
     }
     const sendResturants = async () => {
-        let token = await SecureStore.getItemAsync('token')
-        let mid = await SecureStore.getItemAsync('mid')
+        let token;
+        let mid;
+        if(Platform.OS != 'web') {
+            token = await SecureStore.getItemAsync('token')
+            mid = await SecureStore.getItemAsync('mid')
+        } else {
+            token = 2;
+            mid = 8;
+
+        }
         const data = []
         members.map((member) => {
             if(member.isSelected) {
@@ -48,8 +56,16 @@ const SelectMemebers = ({route , navigation}) => {
 
     }
     const getData = async (keyword) => {
-            let token = await SecureStore.getItemAsync('token')
-            let mid = await SecureStore.getItemAsync('mid')
+        let token;
+        let mid;
+        if(Platform.OS != 'web') {
+            token = await SecureStore.getItemAsync('token')
+            mid = await SecureStore.getItemAsync('mid')
+        } else {
+            token = 2;
+            mid = 8;
+
+        }
             const url = "https://restuapi.orderaid.com.au/api/members?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
             if (keyword.length > 2 ) {
             setLoading(true)

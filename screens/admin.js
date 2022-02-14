@@ -1,12 +1,14 @@
 
 import React , {useState , useEffect} from 'react';
-import {View, TouchableOpacity, Text  , StyleSheet ,  FlatList, Dimensions } from 'react-native'
+import {View, TouchableOpacity, Text  , StyleSheet ,  FlatList, Dimensions, Platform } from 'react-native'
 import { TextInput , Button, BottomNavigation } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
-
+import * as DocumentPicker from 'expo-document-picker';
+import XLSX from 'xlsx';
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const Admin = ({navigation}) => {
+    const [file, setFile] = useState(null);
     const [disabled , setDisabled] = useState({ button : null , disabled : false})
     const [searchMethod , setSearchMethod] = useState('name')
     const [loading , setLoading] = useState(false)
@@ -17,9 +19,16 @@ const Admin = ({navigation}) => {
         setDisabled({button : button , disabled : !disabled})
     }
     const getData = async ( keyword) => {
-            let token = await SecureStore.getItemAsync('token')
-            let mid = await SecureStore.getItemAsync('mid')
+        let token;
+        let mid;
+        if(Platform.OS != 'web') {
+            token = await SecureStore.getItemAsync('token')
+            mid = await SecureStore.getItemAsync('mid')
+        } else {
+            token = 2;
+            mid = 8;
 
+        }
 
             if (keyword.length > 2 ) {
             const url = "https://restuapi.orderaid.com.au/api/resturants?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
@@ -33,11 +42,54 @@ const Admin = ({navigation}) => {
             setLoading(false)
             }).catch(e => console.log(e)) }
     }
-    
-    const sendToAll = async () => {
-      
-    }
 
+      const pickExcel = async () => {
+        let result = await DocumentPicker.getDocumentAsync({});
+       if(result.type != 'cancel') {
+           
+        fetch(result.uri).then(function(res) {
+            /* get the data as a Blob */
+            if(!res.ok) throw new Error("fetch failed");
+            return res.arrayBuffer();
+          }).then(async function(ab) {
+            /* parse the data when it is received */
+            var data = new Uint8Array(ab);
+            var workbook = XLSX.read(data, {type:"array"});
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet);
+            console.log(json);
+            /* DO SOMETHING WITH workbook HERE */
+            var count = 0;
+            for (const [key, value] of Object.entries(json)) {
+                
+                count = count+1;
+                const data = new FormData();
+                data.append('name', value.name);
+                data.append('token', 2);
+                data.append('mid', 8);
+                data.append('address', value.address);
+                data.append('zip', value.zip);
+                data.append('phone', value.phone);
+                let res = await fetch(
+                  'https://restuapi.orderaid.com.au/api/resturants/new',
+                  {
+                    method: 'post',
+                    body: data,
+                    
+                  }
+                ).catch(e => alert("invalid excel file"))
+            }
+            setLoading(true)
+            await fetch('https://restuapi.orderaid.com.au/api/retrivecount?count='+count).then(response => response.json())
+            .then(json => {
+            setResturants(json);
+            setLoading(false) })
+            console.log(count);
+          });
+       }
+       console.log(result.type)
+    }
     const sendResturantsToMemebers = () => {
         const toSend = []
         resturant.map((item) => {
@@ -68,6 +120,12 @@ const Admin = ({navigation}) => {
     const RenderRestu = ({item}) => {
         return (<Restu data={item}></Restu>)
     }
+    const CheckPlatform = () => {
+        if(Platform.OS == 'web') {
+            return <TouchableOpacity   onPress={pickExcel} style={styles.sendButton}><Text>Upload EXCEL</Text></TouchableOpacity>
+        }
+        return (<></>);
+    }
     return (
         <View style={styles.container}>
             <Text style={styles.panelText}>ADMIN PANEL</Text>
@@ -88,7 +146,7 @@ const Admin = ({navigation}) => {
                     />}
             </View>
             <View style={styles.sendButtons}>
-                <TouchableOpacity onPress={sendToAll} style={styles.sendButton}><Text>Send to all</Text></TouchableOpacity>
+                        <CheckPlatform/>
                 <TouchableOpacity onPress={sendResturantsToMemebers} style={styles.sendButton}><Text>Select Members</Text></TouchableOpacity>
             </View>
         </View>
