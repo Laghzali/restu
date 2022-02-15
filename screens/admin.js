@@ -1,6 +1,6 @@
 
 import React , {useState , useEffect} from 'react';
-import {View, TouchableOpacity, Text  , StyleSheet ,  FlatList, Dimensions, Platform } from 'react-native'
+import {View, TouchableOpacity, Text  , StyleSheet ,ScrollView, Image, FlatList,Dimensions, Platform } from 'react-native'
 import { TextInput , Button, BottomNavigation } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
@@ -13,14 +13,23 @@ const Admin = ({navigation}) => {
     const [searchMethod , setSearchMethod] = useState('name')
     const [loading , setLoading] = useState(false)
     const [resturant , setResturants] = useState()
+    const [users , setUsers] = useState(0)
+    const [usersCount , setUsersCount] = useState(0);
+    const [page , setPage] = useState();
     const selectedResturants = resturant 
     const searchBy = (method , button) => {
         setSearchMethod(method)
         setDisabled({button : button , disabled : !disabled})
     }
+    const getUsers = async () => await fetch('http://restuapi.orderaid.com.au/api/getusers').then(response => response.json()).then(json => {
+        console.log("ggg")
+        setUsers(json) 
+    })
+
     const getData = async ( keyword) => {
         let token;
         let mid;
+
         if(Platform.OS != 'web') {
             token = await SecureStore.getItemAsync('token')
             mid = await SecureStore.getItemAsync('mid')
@@ -102,6 +111,83 @@ const Admin = ({navigation}) => {
         navigation.navigate('SelectMembers', {selectedResturants : toSend})
         
     }
+
+    const deleteUser = async (id) => {
+
+        await fetch('http://restuapi.orderaid.com.au/api/deleteuser?id=' + id).then(response => response.json()).then( json => {
+            if(json.status = 200) { getUsers();alert("user has been deleted")}
+        })
+
+    } 
+
+    const AddReviewList =  () => {
+        return <>
+                    <Text style={styles.panelText}>Add new items to review list</Text>
+                    <View style={styles.searchView}>
+                        <TextInput onChangeText={(keyword) => {getData(keyword)}} underlineColor="green" style={styles.searchField} placeholder='Search resturants'></TextInput>
+                        <View style={styles.searchOptions}>
+                            <Text style={{fontWeight:'bold'}}>Search by : </Text>
+                            <Button disabled={disabled.button == 1 ? true : false } mode="contained" onPress={() => {searchBy('name' , 1)}} style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Name</Button>
+                            <Button disabled={disabled.button == 2 ? true : false } mode="contained" onPress={() => {searchBy('zip', 2)}}style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Zip</Button>
+                        </View>
+                    </View>
+                    <View style={styles.resturants}>
+                        {loading ? <Text>loading...</Text> : <FlatList
+                            data={resturant}
+                            renderItem={RenderRestu}
+                            keyExtractor={item => item.id.toString()}
+                            />}
+                    </View>
+                    <View style={styles.sendButtons}>
+                                <CheckPlatform/>
+                        <TouchableOpacity onPress={sendResturantsToMemebers} style={styles.sendButton}><Text>Select Members</Text></TouchableOpacity>
+                    </View>
+
+        </>
+    }
+    const RenderUserCards = () => {
+        var arr = []
+        if(users) {
+            setUsersCount(users.length)
+            users.forEach(item => {
+
+                arr.push(<UserCard key={Math.random().toString()} data={item}></UserCard>)
+            })
+            
+        } 
+        return arr
+
+    }
+    const UsersAdmin = () => {
+
+        return (<><View style={{margin: 20}}>
+                    <TextInput style={{width:'20%',marginBottom:20}} type="Outlined"  label='Search members by name'></TextInput>
+                    <Text style={{fontWeight:'bold',fontSize:25,color:'white'}}>Memebers list</Text>
+                    <Text style={{fontWeight:'bold',fontSize:15,color:'white',marginTop:15}}>Memebers({usersCount})</Text>
+                </View>
+                <ScrollView>
+                <View style={{margin: 20,flex:1,flexDirection:'row',flexWrap:'wrap'}}>
+                <RenderUserCards/>
+                </View>
+                </ScrollView></>)
+
+    }
+
+    const UserCard = ({data}) => {
+        
+        return <View style={styles.UserCard}>
+        <View style={{alignItems:'center',height:'85%'}}>
+            <Text style={{fontWeight:'bold' , fontSize:23,margin:10,marginBottom:10}}>{data.name}</Text>
+            <Text style={{fontWeight:'200',color:'grey'}}>{data.user}</Text>
+            <Image style={{marginTop:20,borderRadius:50}} source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' , width:50,height:50}}></Image>
+        </View>    
+        <View style={{justifyContent:'space-between',flexDirection:'row'}}> 
+        <TouchableOpacity> <Text style={{margin:5,fontWeight:'600'}}>Edit</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => {deleteUser(data.id)}}><Text style={{margin:5,fontWeight:'600'}}>❌</Text></TouchableOpacity>
+        </View>
+    </View>
+    }
+
     const Restu = ({data}) => { 
         const handlePress = (rid) => {
            let arr = selectedResturants.map((rest) => {                    
@@ -128,36 +214,66 @@ const Admin = ({navigation}) => {
     }
     return (
         <View style={styles.container}>
-            <Text style={styles.panelText}>ADMIN PANEL</Text>
-            <TouchableOpacity style={{padding:5}}onPress={() => {SecureStore.deleteItemAsync('token');SecureStore.deleteItemAsync('mid'); navigation.replace('Auth')}}><Text style={{fontWeight:'bold' , color:'white'}}>Logout</Text></TouchableOpacity>
-            <View style={styles.searchView}>
-                <TextInput onChangeText={(keyword) => {getData(keyword)}} underlineColor="green" style={styles.searchField} placeholder='Search resturants'></TextInput>
-                <View style={styles.searchOptions}>
-                    <Text>Search by : </Text>
-                    <Button disabled={disabled.button == 1 ? true : false } mode="contained" onPress={() => {searchBy('name' , 1)}} style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Name</Button>
-                    <Button disabled={disabled.button == 2 ? true : false } mode="contained" onPress={() => {searchBy('zip', 2)}}style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Zip</Button>
+            <View style={styles.sidebar}>
+                <View style={styles.navbar}>
+                 <TouchableOpacity onPress={() => setPage(1)} style={[styles.sendButton , {marginBottom:5}]}><Text>New review list</Text></TouchableOpacity>
+                 <TouchableOpacity onPress={() => {setPage(2); getUsers()}} style={[styles.sendButton , {marginBottom:5}]}><Text>Manage users</Text></TouchableOpacity>
+                 <TouchableOpacity style={[styles.sendButton , {marginBottom:5}]}><Text>Manage resturants</Text></TouchableOpacity>
+                 <TouchableOpacity style={[styles.sendButton , {marginBottom:5}]}><Text>Extract Review list</Text></TouchableOpacity>
+
                 </View>
+                <TouchableOpacity style={styles.sendButton}><Text>Logout</Text></TouchableOpacity>
             </View>
-            <View style={styles.resturants}>
-                {loading ? <Text>loading...</Text> : <FlatList
-                    data={resturant}
-                    renderItem={RenderRestu}
-                    keyExtractor={item => item.id.toString()}
-                    />}
-            </View>
-            <View style={styles.sendButtons}>
-                        <CheckPlatform/>
-                <TouchableOpacity onPress={sendResturantsToMemebers} style={styles.sendButton}><Text>Select Members</Text></TouchableOpacity>
+            <View style={page == 1 ? [styles.AdminBody , {alignItems : 'center'}] : styles.AdminBody }>
+
+            {page == 1 ? <AddReviewList></AddReviewList> : <></>}
+
+            {page == 2 ? <UsersAdmin></UsersAdmin> : <></>}
+            
+            
+            
             </View>
         </View>
     )
 }
 const styles = StyleSheet.create({
+    UserCard : {
+
+        backgroundColor:'white',
+        width:190,
+        height:200,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        margin:10,
+        elevation: 24,
+        borderRadius:5,
+    },
     container : {
         maxHeight : Dimensions.get('screen').height - navHeight,
         flex:1,
-        alignItems : 'center',
-        backgroundColor : '#272121'
+        flexDirection : 'row',
+        width:'100%',
+    },
+    AdminBody : {
+        flex:10,        
+        backgroundColor : '#272121',
+
+    },
+    navbar : {
+        marginTop:50,
+        height:'90%',
+        padding:5
+        
+    },
+    sidebar : {
+        flex:1,
+        backgroundColor : '#272442',
+
     },
     panelText : {
 

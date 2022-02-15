@@ -25,3 +25,10 @@
 ❌//SHOW CORRECT ICON ON REVIEWD ITEM INSTEAD OF IMAGE (OR ON TOP OF IMAGE)
 ✅//PREVENT SIDEBAR FROM RERENDERING !LOW PRIORITY
 ❌//SHOW ACTUAL RATING RESTUVIEW
+
+❌//EXTRACT REVIEWD ITEMS AS EXCEL.
+❌//Manage members view/delete/edit
+❌//manage resturants view/delete/edit
+❌//getusers verify token !!!!!!!
+❌//deleteUser verify token please !!!! security risk !!!!
+❌//CLICK USER CARD TO SEE HIS REVIEWS
