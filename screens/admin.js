@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import * as DocumentPicker from 'expo-document-picker';
 import XLSX from 'xlsx';
-import { white } from 'react-native-paper/lib/typescript/styles/colors';
+
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const Admin = ({navigation}) => {
     const [file, setFile] = useState(null);
@@ -239,7 +239,7 @@ const Admin = ({navigation}) => {
 
             {page == 1 ? <AddReviewList></AddReviewList> : <></>}
 
-            {page == 2 ? <><View style={{flexDirection:'row'}}><TextInput onChangeText={(keyword) => {getMembers(keyword)}} style={{width:'20%',margin:20,alignItems:'center',justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput><TouchableOpacity style={{alignItems:'center',margin:20,justifyContent:'center'}}><Text >Reset</Text></TouchableOpacity></View><UsersAdmin></UsersAdmin></> : <></>}
+            {page == 2 ? <><View style={{flexDirection:'row'}}><TextInput onChangeText={(keyword) => {getMembers(keyword)}} style={{width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput><TouchableOpacity style={{alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',fontWeight:600}}>Reset</Text></TouchableOpacity></View><UsersAdmin></UsersAdmin></> : <></>}
             
             
             
