@@ -1,11 +1,12 @@
 
-import React , {useState , useEffect} from 'react';
-import {View, TouchableOpacity, Text  , StyleSheet ,ScrollView, Image, FlatList,Dimensions, Platform } from 'react-native'
-import { TextInput , Button, BottomNavigation } from 'react-native-paper';
+import React , {useState ,useRef , useEffect} from 'react';
+import {View, TouchableOpacity, Text ,Modal , StyleSheet ,ScrollView, Image, FlatList,Dimensions,TextInput , Platform } from 'react-native'
+import {Button } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
 import * as DocumentPicker from 'expo-document-picker';
 import XLSX from 'xlsx';
+
 
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const Admin = ({navigation}) => {
@@ -17,6 +18,9 @@ const Admin = ({navigation}) => {
     const [users , setUsers] = useState(0)
     const [usersCount , setUsersCount] = useState(0);
     const [page , setPage] = useState();
+    const [editID, setEditID] = useState();
+    const [UserName , setUserName] = useState("")
+    const [UserUser , setUserUser] = useState("")
     const selectedResturants = resturant 
     const searchBy = (method , button) => {
         setSearchMethod(method)
@@ -183,19 +187,57 @@ const Admin = ({navigation}) => {
                 </ScrollView></>)
 
     }
+    const updateUser = async (id , name , user) => {
 
+        let data = new FormData();
+        data.append('id' , id)
+        data.append('name' , name)
+        data.append('user' , user)
+        let url = 'https://restuapi.orderaid.com.au/api/updatemember'
+        await fetch(url, {
+            method: 'post',
+            body : data
+         }).then(response => response.json()).then(json => {
+             if(json.status == 200) {
+                 alert("User has been updated")
+                 getUsers()
+                 setEditID(null)
+                 
+             }
+          })
+
+    }
+    const EditUser = ({data}) => {
+       let mydata = data
+        let UserName = data.name ;
+        let UserUser = data.user;
+      return  (<>
+        <View style={{margin:10,borderRadius:5,flexDirection:'column'}}>
+
+            <TextInput  onChangeText={(input) => UserName = input } placeholder={mydata.name} style={{backgroundColor :'white' , padding:5,borderRadius:5, marginBottom:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'100%',justifyContent:'center'}} type="flat"  label='Name'></TextInput>
+            <TextInput  onChangeText={(input) => UserUser = input }  placeholder={mydata.user} style={{backgroundColor :'white' , padding:5,borderRadius:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'100%',justifyContent:'center'}} type="flat"  label='Email'></TextInput>
+
+        </View>
+        <View style={{justifyContent:'space-between',margin:20,flexDirection:'row'}}> 
+                <TouchableOpacity onPress={() => {updateUser(data.id , UserName ,UserUser)}}> <Text style={{margin:5,fontWeight:'600'}}>✅</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => {deleteUser(data.id)}}><Text style={{margin:5,fontWeight:'600'}}>❌</Text></TouchableOpacity>
+        </View>
+        </>)
+    }
     const UserCard = ({data}) => {
         
         return <View style={styles.UserCard}>
+        {data.id == editID ? <EditUser data={data}></EditUser> : <>
         <View style={{alignItems:'center',height:'85%'}}>
             <Text style={{fontWeight:'bold' , fontSize:23,margin:10,marginBottom:10}}>{data.name}</Text>
             <Text style={{fontWeight:'200',color:'grey'}}>{data.user}</Text>
             <Image style={{marginTop:20,borderRadius:50}} source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' , width:50,height:50}}></Image>
         </View>    
         <View style={{justifyContent:'space-between',flexDirection:'row'}}> 
-        <TouchableOpacity> <Text style={{margin:5,fontWeight:'600'}}>Edit</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => {setEditID(data.id)}}> <Text style={{margin:5,fontWeight:'600'}}>Edit</Text></TouchableOpacity>
         <TouchableOpacity onPress={() => {deleteUser(data.id)}}><Text style={{margin:5,fontWeight:'600'}}>❌</Text></TouchableOpacity>
         </View>
+        </> }
     </View>
     }
 
@@ -239,7 +281,7 @@ const Admin = ({navigation}) => {
 
             {page == 1 ? <AddReviewList></AddReviewList> : <></>}
 
-            {page == 2 ? <><View style={{flexDirection:'row'}}><TextInput onChangeText={(keyword) => {getMembers(keyword)}} style={{width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput><TouchableOpacity style={{alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',fontWeight:600}}>Reset</Text></TouchableOpacity></View><UsersAdmin></UsersAdmin></> : <></>}
+            {page == 2 ? <><View style={{flexDirection:'row'}}><TextInput placeholder='Search by name or email' onChangeText={(keyword) => {getMembers(keyword)}} style={{backgroundColor :'white' , padding:5,borderRadius:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput><TouchableOpacity onPress={() => getUsers()} style={{alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',fontWeight:600}}>Reset</Text></TouchableOpacity></View><UsersAdmin></UsersAdmin></> : <></>}
             
             
             
