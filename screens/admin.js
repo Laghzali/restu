@@ -6,6 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import * as DocumentPicker from 'expo-document-picker';
 import XLSX from 'xlsx';
+import { white } from 'react-native-paper/lib/typescript/styles/colors';
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const Admin = ({navigation}) => {
     const [file, setFile] = useState(null);
@@ -158,10 +159,20 @@ const Admin = ({navigation}) => {
         return arr
 
     }
+    const getMembers = (keyword) => {
+        if (keyword.length > 2 ) {
+            const url = "https://restuapi.orderaid.com.au/api/searchmemebers?keyword=" + keyword
+            fetch(url)
+            .then(response => response.json())
+            .then(json => {
+                setUsers(json) 
+            }).catch(e => console.log(e))
+         }
+
+    }
     const UsersAdmin = () => {
 
         return (<><View style={{margin: 20}}>
-                    <TextInput style={{width:'20%',marginBottom:20}} type="Outlined"  label='Search members by name'></TextInput>
                     <Text style={{fontWeight:'bold',fontSize:25,color:'white'}}>Memebers list</Text>
                     <Text style={{fontWeight:'bold',fontSize:15,color:'white',marginTop:15}}>Memebers({usersCount})</Text>
                 </View>
@@ -228,7 +239,7 @@ const Admin = ({navigation}) => {
 
             {page == 1 ? <AddReviewList></AddReviewList> : <></>}
 
-            {page == 2 ? <UsersAdmin></UsersAdmin> : <></>}
+            {page == 2 ? <><View style={{flexDirection:'row'}}><TextInput onChangeText={(keyword) => {getMembers(keyword)}} style={{width:'20%',margin:20,alignItems:'center',justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput><TouchableOpacity style={{alignItems:'center',margin:20,justifyContent:'center'}}><Text >Reset</Text></TouchableOpacity></View><UsersAdmin></UsersAdmin></> : <></>}
             
             
             
