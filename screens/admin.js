@@ -10,7 +10,7 @@ import XLSX from 'xlsx';
 
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const Admin = ({navigation}) => {
-    const [file, setFile] = useState(null);
+
     const [disabled , setDisabled] = useState({ button : null , disabled : false})
     const [searchMethod , setSearchMethod] = useState('name')
     const [loading , setLoading] = useState(false)
@@ -19,19 +19,18 @@ const Admin = ({navigation}) => {
     const [usersCount , setUsersCount] = useState(0);
     const [page , setPage] = useState();
     const [editID, setEditID] = useState();
-    const [UserName , setUserName] = useState("")
-    const [UserUser , setUserUser] = useState("")
+    const [SearchFrom , setSearchFrom] = useState(0);
     const selectedResturants = resturant 
     const searchBy = (method , button) => {
         setSearchMethod(method)
         setDisabled({button : button , disabled : !disabled})
     }
-    const getUsers = async () => await fetch('http://restuapi.orderaid.com.au/api/getusers').then(response => response.json()).then(json => {
+    const getUsers = async () => await fetch('https://restuapi.orderaid.com.au/api/getusers').then(response => response.json()).then(json => {
         console.log("ggg")
         setUsers(json) 
     })
 
-    const getData = async ( keyword) => {
+    const getData = async ( keyword ) => {
         let token;
         let mid;
 
@@ -44,10 +43,14 @@ const Admin = ({navigation}) => {
 
         }
 
+            let url;
+            if(SearchFrom == 1) {
+                url = "https://restuapi.orderaid.com.au/api/scratch?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
+            } else {
+                url = "https://restuapi.orderaid.com.au/api/resturants?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
+            }
             if (keyword.length > 2 ) {
-            const url = "https://restuapi.orderaid.com.au/api/resturants?method=" + searchMethod + "&keyword="+keyword+"&mid="+mid+"&token="+token
-            console.log(url)
-            setLoading(true)
+            
             fetch(url)
             .then(response => response.json())
             .then(json => {
@@ -72,33 +75,30 @@ const Admin = ({navigation}) => {
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const json = XLSX.utils.sheet_to_json(worksheet);
-            console.log(json);
             /* DO SOMETHING WITH workbook HERE */
-            var count = 0;
-            for (const [key, value] of Object.entries(json)) {
-                
-                count = count+1;
-                const data = new FormData();
-                data.append('name', value.name);
-                data.append('token', 2);
-                data.append('mid', 8);
-                data.append('address', value.address);
-                data.append('zip', value.zip);
-                data.append('phone', value.phone);
-                let res = await fetch(
-                  'https://restuapi.orderaid.com.au/api/resturants/new',
-                  {
-                    method: 'post',
-                    body: data,
-                    
-                  }
-                ).catch(e => alert("invalid excel file"))
-            }
+            var count = Object.entries(json).length
+            let formdata = new FormData()
+            formdata.append('data' , JSON.stringify(json))
+            formdata.append('mid' , 8)
+            formdata.append('token' , 2)
+            await fetch(
+                'https://restuapi.orderaid.com.au/api/resturants/new',
+                {
+                  method: 'post',
+
+                  body: formdata,
+                  
+                }
+              ).catch(e => alert("invalid excel file"))
+
             setLoading(true)
+  
             await fetch('https://restuapi.orderaid.com.au/api/retrivecount?count='+count).then(response => response.json())
             .then(json => {
-            setResturants(json);
-            setLoading(false) })
+                setResturants(json);
+                setSearchFrom(1)
+                setLoading(false) 
+            })
             console.log(count);
           });
        }
@@ -119,37 +119,12 @@ const Admin = ({navigation}) => {
 
     const deleteUser = async (id) => {
 
-        await fetch('http://restuapi.orderaid.com.au/api/deleteuser?id=' + id).then(response => response.json()).then( json => {
+        await fetch('https://restuapi.orderaid.com.au/api/deleteuser?id=' + id).then(response => response.json()).then( json => {
             if(json.status = 200) { getUsers();alert("user has been deleted")}
         })
 
     } 
 
-    const AddReviewList =  () => {
-        return <>
-                    <Text style={styles.panelText}>Add new items to review list</Text>
-                    <View style={styles.searchView}>
-                        <TextInput onChangeText={(keyword) => {getData(keyword)}} underlineColor="green" style={styles.searchField} placeholder='Search resturants'></TextInput>
-                        <View style={styles.searchOptions}>
-                            <Text style={{fontWeight:'bold'}}>Search by : </Text>
-                            <Button disabled={disabled.button == 1 ? true : false } mode="contained" onPress={() => {searchBy('name' , 1)}} style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Name</Button>
-                            <Button disabled={disabled.button == 2 ? true : false } mode="contained" onPress={() => {searchBy('zip', 2)}}style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Zip</Button>
-                        </View>
-                    </View>
-                    <View style={styles.resturants}>
-                        {loading ? <Text>loading...</Text> : <FlatList
-                            data={resturant}
-                            renderItem={RenderRestu}
-                            keyExtractor={item => item.id.toString()}
-                            />}
-                    </View>
-                    <View style={styles.sendButtons}>
-                                <CheckPlatform/>
-                        <TouchableOpacity onPress={sendResturantsToMemebers} style={styles.sendButton}><Text>Select Members</Text></TouchableOpacity>
-                    </View>
-
-        </>
-    }
     const RenderUserCards = () => {
         var arr = []
         if(users) {
@@ -241,24 +216,25 @@ const Admin = ({navigation}) => {
     </View>
     }
 
+    const handlePress =  (rid) => {
+        let arr = selectedResturants.map((rest) => {                    
+                    if(rest.id == rid) {                        
+                        rest.isSelected = rest.isSelected ? false : true 
+                    } return rest
+        })
+        
+       setResturants(arr)        
+    }
+
     const Restu = ({data}) => { 
-        const handlePress = (rid) => {
-           let arr = selectedResturants.map((rest) => {                    
-                       if(rest.id == rid) {                        
-                           rest.isSelected = rest.isSelected ? false : true 
-                       } return rest
-           })
-           setResturants(arr)          
-            }
+        console.log('rendering')
         return ( 
              <View style={{ flexDirection: 'row', justifyContent:'space-between' , backgroundColor: data.isSelected ? 'black' : 'none'}}>
                 <TouchableOpacity style={styles.restuButton} onPress={() => handlePress(data.id)} ><Text style={{ fontSize:16,color:'white',fontWeight:'bold'}} >{data.name}</Text></TouchableOpacity>
                  <Feather style={{ paddingTop:10 , paddingRight:10}} name="check" size={data.isSelected ? 20 : 0} color="white" />
             </View>)
     }
-    const RenderRestu = ({item}) => {
-        return (<Restu data={item}></Restu>)
-    }
+
     const CheckPlatform = () => {
         if(Platform.OS == 'web') {
             return <TouchableOpacity   onPress={pickExcel} style={styles.sendButton}><Text>Upload EXCEL</Text></TouchableOpacity>
@@ -279,7 +255,28 @@ const Admin = ({navigation}) => {
             </View>
             <View style={page == 1 ? [styles.AdminBody , {alignItems : 'center'}] : styles.AdminBody }>
 
-            {page == 1 ? <AddReviewList></AddReviewList> : <></>}
+            {page == 1 ? <>
+                    <Text style={styles.panelText}>Add new items to review list</Text>
+                    <View style={styles.searchView}>
+                        <TextInput onChangeText={(keyword) => {getData(keyword)}} underlineColor="green" style={styles.searchField} placeholder='Search resturants'></TextInput>
+                        <View style={styles.searchOptions}>
+                            <Text style={{fontWeight:'bold'}}>Search by : </Text>
+                            <Button disabled={disabled.button == 1 ? true : false } mode="contained" onPress={() => {searchBy('name' , 1)}} style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Name</Button>
+                            <Button disabled={disabled.button == 2 ? true : false } mode="contained" onPress={() => {searchBy('zip', 2)}}style={{backgroundColor:'rgba(46, 138, 138, 1)'}}>Zip</Button>
+                        </View>
+                    </View>
+                    <View style={styles.resturants}>
+                        {loading ? <Text>loading...</Text> : <FlatList
+                            data={resturant}
+                            renderItem={({item}) => <Restu data={item}></Restu>}
+                            keyExtractor={item => item.id.toString()}
+                            />}
+                    </View>
+                    <View style={styles.sendButtons}>
+                                <CheckPlatform/>
+                        <TouchableOpacity onPress={sendResturantsToMemebers} style={styles.sendButton}><Text>Select Members</Text></TouchableOpacity>
+                    </View>
+ </> : <></>}
 
             {page == 2 ? <><View style={{flexDirection:'row'}}><TextInput placeholder='Search by name or email' onChangeText={(keyword) => {getMembers(keyword)}} style={{backgroundColor :'white' , padding:5,borderRadius:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput><TouchableOpacity onPress={() => getUsers()} style={{alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',fontWeight:600}}>Reset</Text></TouchableOpacity></View><UsersAdmin></UsersAdmin></> : <></>}
             
