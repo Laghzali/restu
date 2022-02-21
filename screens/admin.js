@@ -6,9 +6,9 @@ import { Feather } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
 import * as DocumentPicker from 'expo-document-picker';
 import XLSX from 'xlsx';
+import styles from './admin.css';
+import ManageRestu from './ManageRestu';
 
-
-const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const Admin = ({navigation}) => {
 
     const [disabled , setDisabled] = useState({ button : null , disabled : false})
@@ -81,6 +81,7 @@ const Admin = ({navigation}) => {
             formdata.append('data' , JSON.stringify(json))
             formdata.append('mid' , 8)
             formdata.append('token' , 2)
+            setLoading(true)
             await fetch(
                 'https://restuapi.orderaid.com.au/api/resturants/new',
                 {
@@ -91,18 +92,16 @@ const Admin = ({navigation}) => {
                 }
               ).catch(e => alert("invalid excel file"))
 
-            setLoading(true)
-  
             await fetch('https://restuapi.orderaid.com.au/api/retrivecount?count='+count).then(response => response.json())
             .then(json => {
                 setResturants(json);
                 setSearchFrom(1)
                 setLoading(false) 
             })
-            console.log(count);
+
           });
        }
-       console.log(result.type)
+
     }
     const sendResturantsToMemebers = () => {
         const toSend = []
@@ -113,6 +112,7 @@ const Admin = ({navigation}) => {
 
             }
         })
+
         navigation.navigate('SelectMembers', {selectedResturants : toSend})
         
     }
@@ -247,8 +247,8 @@ const Admin = ({navigation}) => {
                 <View style={styles.navbar}>
                  <TouchableOpacity onPress={() => setPage(1)} style={[styles.sendButton , {marginBottom:5}]}><Text>New review list</Text></TouchableOpacity>
                  <TouchableOpacity onPress={() => {setPage(2); getUsers()}} style={[styles.sendButton , {marginBottom:5}]}><Text>Manage users</Text></TouchableOpacity>
-                 <TouchableOpacity style={[styles.sendButton , {marginBottom:5}]}><Text>Manage resturants</Text></TouchableOpacity>
-                 <TouchableOpacity style={[styles.sendButton , {marginBottom:5}]}><Text>Extract Review list</Text></TouchableOpacity>
+                 <TouchableOpacity onPress={() => setPage(3)} style={[styles.sendButton , {marginBottom:5}]}><Text>Manage resturants</Text></TouchableOpacity>
+                 <TouchableOpacity onPress={() => setPage(4)} style={[styles.sendButton , {marginBottom:5}]}><Text>Extract Review list</Text></TouchableOpacity>
 
                 </View>
                 <TouchableOpacity style={styles.sendButton}><Text>Logout</Text></TouchableOpacity>
@@ -266,7 +266,7 @@ const Admin = ({navigation}) => {
                         </View>
                     </View>
                     <View style={styles.resturants}>
-                        {loading ? <Text>loading...</Text> : <FlatList
+                        {loading ? <Text style={{fontSize:30 , fontWeight:'bold' , color:'white'}}>loading...</Text> : <FlatList
                             data={resturant}
                             renderItem={({item}) => <Restu data={item}></Restu>}
                             keyExtractor={item => item.id.toString()}
@@ -280,123 +280,13 @@ const Admin = ({navigation}) => {
 
             {page == 2 ? <><View style={{flexDirection:'row'}}><TextInput placeholder='Search by name or email' onChangeText={(keyword) => {getMembers(keyword)}} style={{backgroundColor :'white' , padding:5,borderRadius:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput><TouchableOpacity onPress={() => getUsers()} style={{alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',fontWeight:600}}>Reset</Text></TouchableOpacity></View><UsersAdmin></UsersAdmin></> : <></>}
             
+            {page == 3 ? <>
+                <ManageRestu reset={0}/>
+                </> : <></>}
             
             
             </View>
         </View>
     )
 }
-const styles = StyleSheet.create({
-    UserCard : {
-
-        backgroundColor:'white',
-        width:190,
-        height:200,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 12,
-        },
-        shadowOpacity: 0.58,
-        shadowRadius: 16.00,
-        margin:10,
-        elevation: 24,
-        borderRadius:5,
-    },
-    container : {
-        maxHeight : Dimensions.get('screen').height - navHeight,
-        flex:1,
-        flexDirection : 'row',
-        width:'100%',
-    },
-    AdminBody : {
-        flex:10,        
-        backgroundColor : '#272121',
-
-    },
-    navbar : {
-        marginTop:50,
-        height:'90%',
-        padding:5
-        
-    },
-    sidebar : {
-        flex:1,
-        backgroundColor : '#272442',
-
-    },
-    panelText : {
-
-        paddingTop:'10%',
-        fontSize : 20,
-        fontWeight: 'bold',
-        color : 'white',
-    } , 
-    searchView : {
-        paddingTop:'5%',
-        width:'100%',
-        alignItems:'center'
-    },
-    searchField : {
-        padding:5,
-        width : '80%',
-        backgroundColor:'rgba(255,255,255 , 0.2)',
-        borderRadius:5,
-        borderWidth:1,
-        height:50,
-        borderColor:'rgba(46, 138, 138, 1)',
-        borderBottomWidth : 0,
-        borderBottomRightRadius : 0,
-        borderBottomLeftRadius : 0,
-
-    }, 
-    searchOptions : {
-        padding:10,
-        flexDirection : 'row',
-        borderTopWidth : 0,
-        width : '80%',
-        backgroundColor:'rgba(255,255,255 , 0.2)',
-        borderRadius:5,
-        borderTopLeftRadius : 0,
-        borderTopRightRadius : 0,
-        borderWidth:1,
-        justifyContent : 'space-around',
-        alignItems : 'center',
-        borderColor:'rgba(46, 138, 138, 1)'
-    },
-    resturants : {
-        flexDirection :'column',
-        marginTop:5,
-        width:'80%',
-        flex:1,
-        backgroundColor:'rgba(255,255,255 , 0.2)',
-        borderRadius:5,
-        borderWidth:1,
-        borderColor:'rgba(46, 138, 138, 1)'
-    },
-    restuButton : {
-        width:'100%',
-        flex:1,
-        padding:10,
-
-      
-    },
-    checkbox : {
-
-
-
-    },
-    sendButtons : {
-        width:'80%',
-        padding:10,
-        flexDirection:'row',
-        justifyContent : 'space-between'
-    } ,
-    sendButton : {
-        borderWidth : 1,
-        borderRadius : 5,
-        backgroundColor:'white',
-        padding:5
-    }
-})
 export default Admin

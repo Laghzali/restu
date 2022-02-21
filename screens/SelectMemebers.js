@@ -4,6 +4,7 @@ import {View, TouchableOpacity, Text  ,Platform , StyleSheet ,  FlatList, Dimens
 import { TextInput , Button, BottomNavigation } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
+import { AntDesign } from '@expo/vector-icons';
 
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
 const SelectMemebers = ({route , navigation}) => {
@@ -96,12 +97,15 @@ const SelectMemebers = ({route , navigation}) => {
     }
     return (
         <View style={styles.container}>
+            
             <View style={{flexDirection:'column', width:'100%' , justifyContent : 'space-around' , alignItems :'center' }}>
+                
             <Text style={styles.panelText}>ADMIN PANEL</Text>
             <TouchableOpacity style={{padding:5}}onPress={() => {SecureStore.deleteItemAsync('token');SecureStore.deleteItemAsync('mid'); navigation.replace('Auth')}}><Text style={{fontWeight:'bold' , color:'white'}}>Logout</Text></TouchableOpacity>
 
             </View>
             
+            <TouchableOpacity onPress={() => navigation.goBack()}><AntDesign  style={{ marginRight:'auto' , padding:10,}}name="arrowleft" size={30} color="#68D25F" ></AntDesign></TouchableOpacity>
             
             <View style={styles.searchView}>
                 <TextInput onChangeText={(keyword) => {getData( keyword)}} underlineColor="green" style={styles.searchField} placeholder='Search Members'></TextInput>
