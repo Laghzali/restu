@@ -18,6 +18,7 @@
     "axios": "^0.23.0",
     "expo": "^42.0.4",
     "expo-background-fetch": "~9.2.2",
+    "expo-document-picker": "~9.2.4",
     "expo-font": "~9.2.1",
     "expo-image-picker": "~10.2.2",
     "expo-linear-gradient": "~9.2.0",
@@ -57,7 +58,7 @@
     "rn-fetch-blob": "^0.12.0",
     "xlsx": "^0.18.0",
     "yup": "^0.32.11",
-    "expo-document-picker": "~9.2.4"
+    "expo-app-loading": "1.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"

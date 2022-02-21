@@ -33,13 +33,7 @@ const windowHeight = Dimensions.get('window').height;
             image : image , 
             stars : stars , 
             address : address  })}  style={styles.item}>
-             <ImageBackground 
-                resizeMode = 'cover'
-                style={styles.itemImage}
-                source={{
-                uri: image ? image : 'https://icons.iconarchive.com/icons/graphicloads/colorful-long-shadow/256/Restaurant-icon.png',
-                }}
-            >
+
               <LinearGradient 
                 start= {{ x : 1 , y : 1}} 
                 end={{x : 0.6 , y : 0.5}}
@@ -60,7 +54,7 @@ const windowHeight = Dimensions.get('window').height;
                     
                 </View>
               </LinearGradient>  
-            </ImageBackground >
+
       </TouchableOpacity>      
     </View> 
     )}

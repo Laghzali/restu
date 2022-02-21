@@ -6,13 +6,13 @@ import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons'; 
 import * as SecureStore from 'expo-secure-store';
 import * as yup from 'yup';
+import AppLoading from 'expo-app-loading';
 
 import {
     useFonts,
     Inter_900Black,
     Roboto_100Thin
   } from '@expo-google-fonts/inter';
-
   async function secureStore(key , value) {
     await SecureStore.setItemAsync(key, value.toString());
   }
@@ -49,12 +49,6 @@ const Login =({navigation}) => {
           })
           .then(response => response.json())
           .then(data => {
-              if(data.status == 'admin') {
-                secureStore('mid', data.mid);
-                secureStore('isAdmin', 1);
-                secureStore('token', data.token);
-                navigation.replace('Admin' , {mid : data.mid});
-              }
               if(data.status==200) {
                 secureStore('mid', data.mid.toString());
                 secureStore('isAdmin', 0);
@@ -63,20 +57,23 @@ const Login =({navigation}) => {
                 navigation.replace('Landing' , {mid : data.mid});
               }
               if(data.status == 500) {
-                  alert('wrong email or pass')
+                  alert('Wrong email or pass')
               }
           })
           .catch((error) => {
-            console.error('Error:', error);
+            
             alert('error')
 
           });
 
     }
-    let [fontsLoaded] = useFonts({
-        Inter_900Black
-      });
-    
+    let fontsLoaded = async() =>  {
+       await useFonts(Inter_900Black);
+    }
+
+    if(!fontsLoaded) {
+      return <AppLoading />;
+    }
    return <View style={{flex : 1,backgroundColor:'rgb(255,255,255)'}}>
             <LoginBg>
 
