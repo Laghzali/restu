@@ -8,7 +8,8 @@ import * as DocumentPicker from 'expo-document-picker';
 import XLSX from 'xlsx';
 import styles from './admin.css';
 import ManageRestu from './ManageRestu';
-
+import XlsxPopulate from "xlsx-populate";
+import { saveAs } from "file-saver";
 const Admin = ({navigation}) => {
 
     const [disabled , setDisabled] = useState({ button : null , disabled : false})
@@ -60,6 +61,42 @@ const Admin = ({navigation}) => {
             }).catch(e => console.log(e)) }
     }
 
+    function getSheetData(data, header) {
+        var fields = Object.keys(data[0]);
+        var sheetData = data.map(function (row) {
+          return fields.map(function (fieldName) {
+            return row[fieldName] ? row[fieldName] : "";
+          });
+        });
+        sheetData.unshift(header);
+        return sheetData;
+      }
+      const Reviews2Excel = () => {
+          let headers = ["name", "note", "rate" , "user" , "created_at"]
+
+          fetch('https://restuapi.orderaid.com.au/api/reviews2excel')
+          .then(resp => resp.json())
+          .then( json => {
+            XlsxPopulate.fromBlankAsync().then(async (workbook) => {
+                const sheet1 = workbook.sheet(0);
+                const sheetData = getSheetData(json, headers);
+                const totalColumns = sheetData[0].length;
+          
+                sheet1.cell("A1").value(sheetData);
+                const range = sheet1.usedRange();
+                const endColumn = String.fromCharCode(64 + totalColumns);
+                sheet1.row(1).style("bold", true);
+                sheet1.range("A1:" + endColumn + "1").style("fill", "BFBFBF");
+                range.style("border", true);
+                return workbook.outputAsync().then((res) => {
+                    
+                  saveAs(res, "Reviews_"+Date.now()+"_restu.xlsx");
+                });
+              });
+
+
+          })
+      }
       const pickExcel = async () => {
         let result = await DocumentPicker.getDocumentAsync({});
        if(result.type != 'cancel') {
@@ -248,7 +285,7 @@ const Admin = ({navigation}) => {
                  <TouchableOpacity onPress={() => setPage(1)} style={[styles.sendButton , {marginBottom:5}]}><Text>New review list</Text></TouchableOpacity>
                  <TouchableOpacity onPress={() => {setPage(2); getUsers()}} style={[styles.sendButton , {marginBottom:5}]}><Text>Manage users</Text></TouchableOpacity>
                  <TouchableOpacity onPress={() => setPage(3)} style={[styles.sendButton , {marginBottom:5}]}><Text>Manage resturants</Text></TouchableOpacity>
-                 <TouchableOpacity onPress={() => setPage(4)} style={[styles.sendButton , {marginBottom:5}]}><Text>Extract Review list</Text></TouchableOpacity>
+                 <TouchableOpacity onPress={() => Reviews2Excel()} style={[styles.sendButton , {marginBottom:5}]}><Text>Extract Review list</Text></TouchableOpacity>
 
                 </View>
                 <TouchableOpacity style={styles.sendButton}><Text>Logout</Text></TouchableOpacity>
