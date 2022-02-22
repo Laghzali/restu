@@ -10,6 +10,7 @@ import styles from './admin.css';
 import ManageRestu from './ManageRestu';
 import XlsxPopulate from "xlsx-populate";
 import { saveAs } from "file-saver";
+import ReadyToReview from './ReadyToReview';
 const Admin = ({navigation}) => {
 
     const [disabled , setDisabled] = useState({ button : null , disabled : false})
@@ -18,7 +19,7 @@ const Admin = ({navigation}) => {
     const [resturant , setResturants] = useState()
     const [users , setUsers] = useState(0)
     const [usersCount , setUsersCount] = useState(0);
-    const [page , setPage] = useState();
+    const [page , setPage] = useState(3);
     const [editID, setEditID] = useState();
     const [SearchFrom , setSearchFrom] = useState(0);
     const selectedResturants = resturant 
@@ -149,8 +150,7 @@ const Admin = ({navigation}) => {
 
             }
         })
-
-        navigation.navigate('SelectMembers', {selectedResturants : toSend})
+        navigation.navigate('SelectMembers', {selectedResturants : toSend , dURL : 1})
         
     }
 
@@ -286,6 +286,7 @@ const Admin = ({navigation}) => {
                  <TouchableOpacity onPress={() => {setPage(2); getUsers()}} style={[styles.sendButton , {marginBottom:5}]}><Text>Manage users</Text></TouchableOpacity>
                  <TouchableOpacity onPress={() => setPage(3)} style={[styles.sendButton , {marginBottom:5}]}><Text>Manage resturants</Text></TouchableOpacity>
                  <TouchableOpacity onPress={() => Reviews2Excel()} style={[styles.sendButton , {marginBottom:5}]}><Text>Extract Review list</Text></TouchableOpacity>
+                 <TouchableOpacity onPress={() => setPage(4)} style={[styles.sendButton , {marginBottom:5}]}><Text>Ready to review</Text></TouchableOpacity>
 
                 </View>
                 <TouchableOpacity style={styles.sendButton}><Text>Logout</Text></TouchableOpacity>
@@ -318,9 +319,11 @@ const Admin = ({navigation}) => {
             {page == 2 ? <><View style={{flexDirection:'row'}}><TextInput placeholder='Search by name or email' onChangeText={(keyword) => {getMembers(keyword)}} style={{backgroundColor :'white' , padding:5,borderRadius:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput><TouchableOpacity onPress={() => getUsers()} style={{alignItems:'center',justifyContent:'center'}}><Text style={{color:'white',fontWeight:600}}>Reset</Text></TouchableOpacity></View><UsersAdmin></UsersAdmin></> : <></>}
             
             {page == 3 ? <>
-                <ManageRestu reset={0}/>
+                <ManageRestu navigation={navigation} reset={0}/>
                 </> : <></>}
-            
+                {page == 4 ? <>
+                <ReadyToReview/>
+                </> : <></>}
             
             </View>
         </View>

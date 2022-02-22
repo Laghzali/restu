@@ -7,13 +7,20 @@ import * as SecureStore from 'expo-secure-store';
 import { AntDesign } from '@expo/vector-icons';
 
 const navHeight = Dimensions.get('screen').height - Dimensions.get('window').height
-const SelectMemebers = ({route , navigation}) => {
+const SelectMemebers = ({route , navigation , dURL}) => {
     const selectedResturants = route.params.selectedResturants
     const [disabled , setDisabled] = useState()
     const [searchMethod , setSearchMethod] = useState('name')
     const [loading , setLoading] = useState(false)
     const [members , setMembers] = useState()
+    let URL;
     const selectedMembers = members 
+    if(dURL=1) {
+        URL = 'https://restuapi.orderaid.com.au/api/sendtoreview';
+    } else {
+        URL = 'https://restuapi.orderaid.com.au/api/toreview'
+    }
+    console.log(URL)
     const searchBy = (method , button) => {
         setSearchMethod(method)
         setDisabled(button)
@@ -38,7 +45,7 @@ const SelectMemebers = ({route , navigation}) => {
             
         })
         const dataObg = {'mid' : mid , 'token' : token ,'data' : data }
-        fetch('https://restuapi.orderaid.com.au/api/toreview', {
+        fetch(URL, {
             method: 'POST', 
             headers: {
               'Content-Type': 'application/json',

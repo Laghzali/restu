@@ -4,13 +4,14 @@ import Splash from './screens/splash/splash'
 import SignUp from './screens/signup/signup'
 import Login from './screens/login/login'
 import RestuView from './screens/home/restuview'
-import Home from './screens/home/home'
+
 
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Landing from './screens/landing'
 import Admin from './screens/admin'
 import SelectMemebers from './screens/SelectMemebers'
+import ManageRestu from './screens/ManageRestu';
 const Stack  = createStackNavigator();
 
 const Auth = ({navigation}) => {
@@ -71,7 +72,12 @@ export default function App() {
           // Hiding header for Navigation Drawer
           options={{headerShown: false}}
         />
-
+        <Stack.Screen
+          name="ManageRestu"
+          component={ManageRestu}
+          // Hiding header for Navigation Drawer
+          options={{headerShown: false}}
+        />
         <Stack.Screen 
           name="RestuView"
           component={RestuView}
