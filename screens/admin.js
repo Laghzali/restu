@@ -73,7 +73,7 @@ const Admin = ({navigation}) => {
         return sheetData;
       }
       const Reviews2Excel = () => {
-          let headers = ["name", "note", "rate" , "user" , "created_at"]
+          let headers = ["name", "note", "rate" , "user" , "created_at" , "image"]
 
           fetch('https://restuapi.orderaid.com.au/api/reviews2excel')
           .then(resp => resp.json())
