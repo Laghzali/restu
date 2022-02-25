@@ -1,14 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React , {useState , useRef , useEffect} from 'react';
 import Splash from './screens/splash/splash'
-import SignUp from './screens/signup/signup'
 import Login from './screens/login/login'
-import RestuView from './screens/home/restuview'
-
-
 import { NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import Landing from './screens/landing'
 import Admin from './screens/admin'
 import SelectMemebers from './screens/SelectMemebers'
 import ManageRestu from './screens/ManageRestu';
@@ -53,13 +48,7 @@ export default function App() {
           component={Auth}
           options={{headerShown: false}}
         />
-        {/* Navigation Drawer as a landing page */}
-        <Stack.Screen
-          name="Landing"
-          component={Landing}
-          // Hiding header for Navigation Drawer
-          options={{headerShown: false}}
-        />
+        
         <Stack.Screen
           name="Admin"
           component={Admin}
@@ -75,12 +64,6 @@ export default function App() {
         <Stack.Screen
           name="ManageRestu"
           component={ManageRestu}
-          // Hiding header for Navigation Drawer
-          options={{headerShown: false}}
-        />
-        <Stack.Screen 
-          name="RestuView"
-          component={RestuView}
           // Hiding header for Navigation Drawer
           options={{headerShown: false}}
         />

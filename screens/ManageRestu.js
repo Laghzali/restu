@@ -58,7 +58,12 @@ const ManageRestu = ({navigation}) => {
             return item.id
         })
         console.log(tosend)
-        navigation.navigate('SelectMembers', {selectedResturants : tosend , dURL : 1})
+        if(tosend.length>0) {
+            navigation.navigate('SelectMembers', {selectedResturants : tosend , dURL : 1})
+        } else {
+            alert("Please select atleast 1 item from the list")
+        }
+       
 
     }
 
