@@ -59,7 +59,8 @@
     "redux": "^4.1.1",
     "rn-fetch-blob": "^0.12.0",
     "xlsx": "^0.18.0",
-    "xlsx-populate": "^1.21.0"
+    "xlsx-populate": "^1.21.0",
+    "expo-app-loading": "1.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"

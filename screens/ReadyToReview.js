@@ -65,7 +65,7 @@ const ReadyToReview = () => {
 
     return (<>
              <View style={{flexDirection:'row'}}>
-            <TextInput  placeholder='Search by name or zip' onChangeText={(keyword) => { keyword.length > 2 ? setKeyword(keyword) : setKeyword("")}} style={{backgroundColor :'white' , padding:5,borderRadius:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput>
+            <TextInput  placeholder='Search by name or zip/city' onChangeText={(keyword) => { keyword.length > 2 ? setKeyword(keyword) : setKeyword("")}} style={{backgroundColor :'white' , padding:5,borderRadius:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput>
             <TouchableOpacity onPress={() => {setKeyword("");setPage(0)}} style={{alignItems:'center',justifyContent:'center'}}>
                 <Text style={{color:'white',fontWeight:600}}>Reset</Text>
             </TouchableOpacity>

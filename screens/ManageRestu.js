@@ -1,17 +1,19 @@
-import React , {useState ,useEffect} from 'react';
+import React , {useState ,useEffect , useReducer} from 'react';
 import {View, TouchableOpacity, Text  ,ScrollView, Image, Button,TextInput  } from 'react-native'
 import { FontAwesome } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import AppLoading from 'expo-app-loading';
 
 const ManageRestu = ({navigation}) => {
-    console.log(navigation)
-    const [restCount , setRestCount] = useState(0)
+
     const [resturants, setResturants] = useState();
     const [selectedRestu , setSelectedRestu] =  useState(0)
     const [selectedRestuData , setSelectedRestuData] =  useState()
     const [Reviews , setReviews] = useState()
     const [page, setPage] = useState(0)
     const [keyword , setKeyword] = useState("")
+    const [items , setItems] = useState([])
+    const [_, forceUpdate] = useReducer((x) => x + 1, 0);
     const GetReview = async  (rid) => {
        
        await fetch("https://restuapi.orderaid.com.au/api/reviews?rid="+rid)
@@ -41,7 +43,7 @@ const ManageRestu = ({navigation}) => {
         .then(json => {
 
             setResturants(json)
-            setRestCount(Object.entries(json).length)
+
 
         })
         
@@ -51,15 +53,50 @@ const ManageRestu = ({navigation}) => {
         getResturants()
     },[page, keyword])
 
-    const sendTomember = (id) => {
-
-        navigation.navigate('SelectMembers', {selectedResturants : [id] , dURL : 1})
+    const sendTomembers = () => {
+        let tosend = items.map( item=> {
+            return item.id
+        })
+        console.log(tosend)
+        navigation.navigate('SelectMembers', {selectedResturants : tosend , dURL : 1})
 
     }
 
+
+    const handlePress =  (rid) => {
+        let previtems = items;
+        let itshere = false;
+
+            previtems.forEach((item) => {
+
+                if(item.id == rid && itshere == false ) {
+                    item.isSelected = !item.isSelected
+                    console.log('itshere')
+                    itshere = true
+                }
+            })
+
+            if(!itshere) {
+                previtems.push({id : rid , isSelected : true})
+
+            } else {
+            }
+
+        setItems(previtems)
+        forceUpdate()
+    }
+    if(!resturants) {
+        return (<AppLoading></AppLoading>)
+    }
     const Resturant = ({data , disabled}) => {
+        let isSelected;
+        items.forEach(item => {
+            if(item.id == data.id && item.isSelected) {
+                isSelected = true
+            }
+        })
         return (
-        <TouchableOpacity disabled={disabled} onPress={() => {setSelectedRestuData(data);GetReview(data.id)}} style={{backgroundColor:'rgba(232, 236, 241, 0.2)', marginRight:5, flexDirection:'row' , marginBottom:5}}>    
+        <TouchableOpacity  disabled={disabled} onPress={() => {handlePress(data.id)}} style={isSelected ? {backgroundColor:'rgba(232, 236, 241, 0.5)', marginRight:5, flexDirection:'row' , marginBottom:5} : {backgroundColor:'rgba(232, 236, 241, 0.2)', marginRight:5, flexDirection:'row' , marginBottom:5}}>    
           
             <View style={{flexDirection:'row' , alignItems:'center'}}>
                 <View style={{flexDirection:'column',padding:10,alignItems:'center'}}>
@@ -75,26 +112,11 @@ const ManageRestu = ({navigation}) => {
             </View>
             {disabled ? <></> : 
             <View style={{justifyContent:'flex-end'}}>
-                     <TouchableOpacity onPress={() => sendTomember(data.id)} style={{padding:10}}><FontAwesome name="paper-plane" size={24} color="#68D25F" /></TouchableOpacity>
+                     <TouchableOpacity onPress={() => {setSelectedRestuData(data);GetReview(data.id)}} style={{padding:10}}><AntDesign name="eye" size={21} color="#68D25F" /></TouchableOpacity>
             </View> }
         </TouchableOpacity>
         )
         
-    }
-
-    const RenderResturant = () => {
-
-        var arr = []
-        if(resturants) {
-
-            resturants.forEach(item => {
-
-                arr.push(<Resturant  key={Math.random().toString()} data={item}></Resturant>)
-            })
-            
-        } 
-        return arr
-
     }
 
     const RenderReview = ({data}) => {
@@ -120,12 +142,12 @@ const ManageRestu = ({navigation}) => {
             )})
     
     }
-
+let rest = resturants
     return (<>
         {  selectedRestu == 0 ? 
         <>
          <View style={{flexDirection:'row'}}>
-            <TextInput  placeholder='Search by name or zip' onChangeText={(keyword) => { keyword.length > 2 ? setKeyword(keyword) : setKeyword("")}} style={{backgroundColor :'white' , padding:5,borderRadius:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput>
+            <TextInput  placeholder='Search by name or zip/city' onChangeText={(keyword) => { if(keyword.length > 2) {setKeyword(keyword)}}} style={{backgroundColor :'white' , padding:5,borderRadius:5, borderWidth:1, color:'grey', height:35, borderColor:'purple' ,width:'20%',margin:20,justifyContent:'center'}} type="Outlined"  label='Search members by name'></TextInput>
             <TouchableOpacity onPress={() => {setKeyword("");setPage(0)}} style={{alignItems:'center',justifyContent:'center'}}>
                 <Text style={{color:'white',fontWeight:600}}>Reset</Text>
             </TouchableOpacity>
@@ -139,11 +161,16 @@ const ManageRestu = ({navigation}) => {
             <TouchableOpacity onPress={() => page-1 > 0 ? setPage(page-1) : setPage(0)} style={{marginRight:5}}><Text style={{color:'white', fontWeight:600}}>Prev</Text></TouchableOpacity>
             <Text style={{color:'white', fontWeight:500}}>.... {page} .... </Text>
             <TouchableOpacity onPress={() => setPage(page+1)}><Text style={{color:'white',fontWeight:600}}>Next</Text></TouchableOpacity>
+            <TouchableOpacity style={{marginLeft:20}} onPress={() => sendTomembers()}><FontAwesome name="send" size={22} color="#68D25F" /></TouchableOpacity>
         </View>
-        <ScrollView>
-            <View style={{margin: 20,flexDirection:'row' , flexWrap : 'wrap'}}>
+        <ScrollView style={{marginBottom:20}}>
+            <View style={{margin: 20,marginBottom:20,flexDirection:'row' , flexWrap : 'wrap'}}>
 
-                <RenderResturant/>
+                {rest.map(item => {
+
+                    return (<Resturant key={Math.random().toString()} data={item}></Resturant>)
+                  })
+                }
             </View>
         </ScrollView> </>
         : <View style={{padding:50}}>
