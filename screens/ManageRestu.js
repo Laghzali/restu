@@ -55,7 +55,9 @@ const ManageRestu = ({navigation}) => {
 
     const sendTomembers = () => {
         let tosend = items.map( item=> {
-            return item.id
+            if(item.isSelected) {
+                return item.id
+            }
         })
         console.log(tosend)
         if(tosend.length>0) {
