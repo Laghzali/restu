@@ -25,15 +25,17 @@
 ✅//SHOW CORRECT ICON ON REVIEWD ITEM INSTEAD OF IMAGE (OR ON TOP OF IMAGE)
 ✅//PREVENT SIDEBAR FROM RERENDERING !LOW PRIORITY
 ✅//SHOW ACTUAL RATING RESTUVIEW
-❌//show all user reviews in user managment page
-❌//show resturant reviews
-❌//EXTRACT REVIEWD ITEMS AS EXCEL.
-❌//Manage members view/delete/edit
+✅//show all user reviews in user managment page
+✅//show resturant reviews
+✅//EXTRACT REVIEWD ITEMS AS EXCEL.
+✅//Manage members view/delete/edit
 ❌//manage resturants view/delete/edit
 ❌//getusers verify token !!!!!!!
 ❌//deleteUser verify token please !!!! security risk !!!!
 ❌//CLICK USER CARD TO SEE HIS REVIEWS
-❌//navigation.goback() selct memebers
+✅//navigation.goback() selct memebers
 ✅(if aint broken dont fix it)//Fix resturant search filter // rid of the state use onchange
-❌//fix excel upload // send array instead of new request for each record
+✅//fix excel upload // send array instead of new request for each record
 ✅//send uploaded excel records to scratch table and only save the selected entries to the actual table // tranctuate the table after the entries were send to review
+
+onPress={() => sendTomember(data.id)}
