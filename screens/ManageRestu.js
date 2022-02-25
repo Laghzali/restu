@@ -55,12 +55,12 @@ const ManageRestu = ({navigation}) => {
 
     const sendTomembers = () => {
         let tosend = items.map( item=> {
-            if(item.isSelected) {
+            if(item.isSelected === true) {
+                console.log(item)
                 return item.id
             }
         })
-        console.log(tosend)
-        if(tosend.length>0) {
+        if(tosend.length>0 && tosend[0] != undefined){
             navigation.navigate('SelectMembers', {selectedResturants : tosend , dURL : 1})
         } else {
             alert("Please select atleast 1 item from the list")
