@@ -38,4 +38,14 @@
 ✅//fix excel upload // send array instead of new request for each record
 ✅//send uploaded excel records to scratch table and only save the selected entries to the actual table // tranctuate the table after the entries were send to review
 
-onPress={() => sendTomember(data.id)}
+❌//show user reviews
+❌//show user ready jobs
+how would i do that?
+
+create new page based on ready to review page.
+    when user click ready to review button. i will redirect him to ready to review page for that specific user, i can do that buy storing the user id and pass it to getReviews().
+    when user click all reviews button. i will redirect him to ready to  review page that contains all the restaurants the user has reviewd.
+
+
+    storing user id 
+    then check if the user id is set. if true display UserReviews
