@@ -3,21 +3,29 @@ import {View, TouchableOpacity, Text  ,ScrollView, Image, Button,TextInput  } fr
 import { FontAwesome } from '@expo/vector-icons';
 
 
-const ReadyToReview = () => {
+const UserReviews = ({uid}) => {
     const [keyword , setKeyword] = useState("")
     const [page , setPage] = useState(0)
     const [resturants ,  setResturants] = useState()
+    const [UserName , setUserName] = useState('')
     const getData = () => {
 
-        let url='https://restuapi.orderaid.com.au/api/readytoreview?mid=8&token=2&page='+page
+        let url='https://restuapi.orderaid.com.au/api/readytoreview?mid=8&token=2&page='+page+'&uid='+uid
         if(keyword.length>=3) {
-            url='https://restuapi.orderaid.com.au/api/readytoreview?mid=8&token=2&keyword='+keyword+'&page='+page
+            url='https://restuapi.orderaid.com.au/api/readytoreview?mid=8&token=2&keyword='+keyword+'&page='+page+'&uid='+uid
         }
         fetch(url)
         .then(resp => resp.json())
         .then(json => {
             console.log(json)
             setResturants(json)
+        let username 
+           json.forEach( item=> {
+
+                username = item.mname
+
+            })
+            setUserName(username)
         })
     }
     useEffect( ()=> {
@@ -72,7 +80,7 @@ const ReadyToReview = () => {
         </View>
     
         <View style={{margin: 20 , marginBottom:5}}>
-                <Text style={{fontWeight:'bold',fontSize:25,color:'white'}}>Ready to view list</Text>
+                <Text style={{fontWeight:'bold',fontSize:25,color:'white'}}>Jobs ready to review by user : {UserName}</Text>
 
         </View>
         <View style={{flexDirection:'row' , margin:20,marginBottom:0, justifyContent:''}}>
@@ -88,4 +96,4 @@ const ReadyToReview = () => {
         </ScrollView> </>)
  }
 
-export default ReadyToReview
+export default UserReviews

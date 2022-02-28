@@ -17,6 +17,7 @@
     "@react-navigation/stack": "^6.0.9",
     "axios": "^0.23.0",
     "expo": "^42.0.4",
+    "expo-app-loading": "1.1.2",
     "expo-background-fetch": "~9.2.2",
     "expo-document-picker": "~9.2.4",
     "expo-font": "~9.2.1",
@@ -59,8 +60,7 @@
     "redux": "^4.1.1",
     "rn-fetch-blob": "^0.12.0",
     "xlsx": "^0.18.0",
-    "xlsx-populate": "^1.21.0",
-    "expo-app-loading": "1.1.2"
+    "xlsx-populate": "^1.21.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"

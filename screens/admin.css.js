@@ -18,6 +18,22 @@ const styles = StyleSheet.create({
         elevation: 24,
         borderRadius:5,
     },
+    AddUser : {
+
+        backgroundColor:'white',
+        width:'15%',
+
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 12,
+        },
+        shadowOpacity: 0.58,
+        shadowRadius: 16.00,
+        margin:10,
+        elevation: 24,
+        borderRadius:5,
+    },
     container : {
         maxHeight : Dimensions.get('screen').height - navHeight,
         flex:1,
